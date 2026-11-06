@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>СобесТрен ИТП — тренажёр собеседований</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   ОФОРМЛЕНИЕ. Цвета и шрифты меняются в переменных ниже.
+   ========================================================= */
+:root{
+  --bg:#F4F2ED; --surface:#FFFFFF; --ink:#171B24; --muted:#656B76; --line:#E3DED4;
+  --primary:#2F55E4; --primary-soft:#E8EDFF; --accent:#F08A24;
+  --good:#1E9B6A; --mid:#D99317; --bad:#D24B4B;
+  --radius:16px; --shadow:0 1px 2px rgba(23,27,36,.05),0 8px 24px rgba(23,27,36,.06);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:'Onest',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer}
+textarea{font:inherit}
+a{color:var(--primary)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+
+/* Шапка */
+header{position:sticky;top:0;z-index:10;background:rgba(244,242,237,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:16px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.01em;cursor:pointer;background:none;border:0;padding:0;color:var(--ink)}
+.logo{width:34px;height:34px;border-radius:10px;background:var(--ink);display:grid;place-items:center}
+.brand small{font-weight:500;color:var(--muted);font-size:13px}
+nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+nav button{background:none;border:0;padding:8px 12px;border-radius:10px;color:var(--muted);font-weight:500;font-size:15px}
+nav button:hover{background:#EAE6DD;color:var(--ink)}
+nav button.on{background:var(--ink);color:#fff}
+
+@media (max-width:720px){
+  .bar{height:auto;flex-wrap:wrap;padding-top:10px;padding-bottom:8px;gap:8px}
+  .brand small{display:inline}
+  nav{margin-left:0;width:100%;flex-wrap:nowrap;overflow-x:auto;gap:2px}
+  nav button{white-space:nowrap;padding:7px 10px;font-size:14px}
+  .chat{height:calc(100vh - 190px)}
+  .msg{max-width:92%}
+}
+main{padding:40px 0 64px}
+.view{display:none}
+.view.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+h1{font-size:clamp(30px,4.6vw,50px);line-height:1.08;letter-spacing:-.025em;margin:0 0 16px;font-weight:800}
+h2{font-size:26px;letter-spacing:-.015em;margin:0 0 6px;font-weight:700}
+h3{font-size:18px;margin:0 0 8px;font-weight:700}
+.lead{font-size:18px;color:var(--muted);max-width:640px;margin:0 0 28px}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow)}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)}
+@media (max-width:820px){.g2,.g3{grid-template-columns:1fr}}
+
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:12px;padding:13px 22px;font-weight:600;font-size:16px;background:var(--primary);color:#fff;transition:transform .1s,background .15s}
+.btn:hover{background:#2446C7}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.ghost:hover{background:#EDE9E1}
+.btn.dark{background:var(--ink)} .btn.dark:hover{background:#000}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+
+/* Главная */
+.hero{display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:center;margin-bottom:40px}
+@media (max-width:900px){.hero{grid-template-columns:1fr}}
+.eyebrow{display:inline-block;font-size:13px;font-weight:600;color:var(--primary);background:var(--primary-soft);padding:5px 10px;border-radius:99px;margin-bottom:16px}
+.demo{background:var(--ink);color:#fff;border-radius:20px;padding:22px;box-shadow:var(--shadow)}
+.demo .m{background:#262C3A;border-radius:14px 14px 14px 4px;padding:12px 14px;font-size:15px;margin-bottom:10px;max-width:90%}
+.demo .m.u{background:var(--primary);margin-left:auto;border-radius:14px 14px 4px 14px}
+.demo .tag{font-size:12px;color:#9AA3B5;margin-bottom:4px}
+.demo .score{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.demo .score span{font-size:12px;background:#262C3A;padding:4px 9px;border-radius:99px}
+.stats{display:flex;gap:28px;flex-wrap:wrap;margin-top:28px}
+.stats b{display:block;font-size:28px;letter-spacing:-.02em}
+.stats span{font-size:14px;color:var(--muted)}
+.step-n{width:32px;height:32px;border-radius:10px;background:var(--primary-soft);color:var(--primary);font-weight:700;display:grid;place-items:center;margin-bottom:12px}
+
+/* Настройка */
+.section-t{font-weight:700;margin:28px 0 12px;font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.opt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.opt-grid{grid-template-columns:1fr}}
+.opt{text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:16px;transition:border-color .15s,box-shadow .15s;color:var(--ink)}
+.opt:hover{border-color:#C9C2B4}
+.opt.on{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+.opt b{display:block;margin-bottom:4px;font-size:16px}
+.opt span{font-size:14px;color:var(--muted);display:block}
+.seg{display:inline-flex;background:#E9E5DC;border-radius:12px;padding:4px}
+.seg button{border:0;background:none;padding:8px 18px;border-radius:9px;font-weight:600;color:var(--muted)}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.check{display:flex;align-items:center;gap:10px;font-size:15px;cursor:pointer;user-select:none}
+.check input{width:18px;height:18px;accent-color:var(--primary)}
+
+/* Интервью */
+.iv{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start}
+@media (max-width:900px){.iv{grid-template-columns:1fr}}
+.chat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);display:flex;flex-direction:column;height:calc(100vh - 160px);min-height:520px;box-shadow:var(--shadow)}
+.chat-h{padding:14px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:700;flex:none}
+.msgs{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:82%;padding:12px 16px;border-radius:16px;white-space:pre-wrap;word-wrap:break-word}
+.msg.bot{background:#F1EEE7;border-bottom-left-radius:4px}
+.msg.bot.q{background:var(--ink);color:#fff}
+.msg.me{background:var(--primary);color:#fff;margin-left:auto;border-bottom-right-radius:4px}
+.msg .meta{display:block;font-size:12px;opacity:.65;margin-top:6px}
+.typing{display:inline-flex;gap:4px;padding:14px 16px;background:#F1EEE7;border-radius:16px;border-bottom-left-radius:4px;width:fit-content}
+.typing i{width:7px;height:7px;border-radius:50%;background:#9B9488;animation:blink 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes blink{0%,80%,100%{opacity:.3}40%{opacity:1}}
+.composer{border-top:1px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:10px}
+.composer textarea{width:100%;min-height:96px;max-height:220px;resize:vertical;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;font-size:16px;outline:none;background:#FCFBF9}
+.composer textarea:focus{border-color:var(--primary)}
+.comp-row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.timer{font-variant-numeric:tabular-nums;font-weight:600;font-size:15px;padding:6px 10px;border-radius:8px;background:#EEEAE2}
+.timer.warn{background:#FCEFD9;color:#9A5B00}.timer.over{background:#FBE3E3;color:var(--bad)}
+.side .card{padding:18px;margin-bottom:14px}
+.prog{height:8px;background:#EEEAE2;border-radius:99px;overflow:hidden;margin:10px 0 6px}
+.prog i{display:block;height:100%;background:var(--primary);width:0;transition:width .4s}
+.star{display:grid;grid-template-columns:28px 1fr;gap:6px 10px;font-size:14px}
+.star b{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary)}
+.linkbtn{background:none;border:0;color:var(--muted);text-decoration:underline;padding:0;font-size:14px}
+.linkbtn:hover{color:var(--ink)}
+
+/* Отчёт */
+.rep-top{display:grid;grid-template-columns:260px 1fr 1fr;gap:16px;margin-bottom:16px}
+@media (max-width:1000px){.rep-top{grid-template-columns:1fr}}
+.ring{position:relative;width:170px;height:170px;margin:4px auto 12px}
+.ring svg{transform:rotate(-90deg)}
+.ring .val{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.ring .val b{font-size:44px;letter-spacing:-.03em;line-height:1}
+.ring .val span{font-size:13px;color:var(--muted)}
+.verdict{text-align:center;font-weight:700}
+.bars .b{margin-bottom:12px}
+.bars .bl{display:flex;justify-content:space-between;font-size:14px;margin-bottom:5px}
+.bars .bt{height:9px;background:#EEEAE2;border-radius:99px;overflow:hidden}
+.bars .bt i{display:block;height:100%;border-radius:99px}
+.focus-tag{font-size:11px;font-weight:700;color:var(--accent);margin-left:6px;text-transform:uppercase;letter-spacing:.04em}
+.metric{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px}
+.metric:last-child{border:0}
+.ans{border:1px solid var(--line);border-radius:14px;margin-bottom:10px;background:var(--surface);overflow:hidden}
+.ans>button{width:100%;text-align:left;background:none;border:0;padding:16px 18px;display:flex;gap:14px;align-items:center;color:var(--ink)}
+.ans .sc{flex:none;width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-weight:800;color:#fff}
+.ans .qt{flex:1;font-weight:600}
+.ans .chev{transition:transform .2s;color:var(--muted)}
+.ans.open .chev{transform:rotate(180deg)}
+.ans .body{display:none;padding:0 18px 18px 78px}
+@media (max-width:700px){.ans .body{padding:0 16px 16px}}
+.ans.open .body{display:block}
+.quote{background:#F6F4EF;border-radius:10px;padding:12px 14px;font-size:15px;white-space:pre-wrap;margin:6px 0 14px;color:#3A3F4A}
+.pl{list-style:none;padding:0;margin:0 0 12px}
+.pl li{padding-left:24px;position:relative;margin-bottom:6px;font-size:15px}
+.pl li:before{position:absolute;left:0;top:0;font-weight:700}
+.pl.plus li:before{content:'+';color:var(--good)}
+.pl.minus li:before{content:'→';color:var(--accent)}
+.chip{display:inline-block;font-size:12px;font-weight:600;padding:3px 9px;border-radius:99px;background:#EEEAE2;color:#4A4F59;margin:0 6px 6px 0}
+.chip.t-hr{background:#E8EDFF;color:#2F55E4}.chip.t-beh{background:#E3F4EC;color:#16795A}
+.chip.t-case{background:#FDEEDC;color:#A65A0B}.chip.t-stress{background:#FBE3E3;color:#B03A3A}
+.delta{font-size:14px;font-weight:600}
+.notice{font-size:14px;color:var(--muted);background:#EEEAE2;border-radius:12px;padding:12px 14px}
+
+/* Банк вопросов */
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+select{font:inherit;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface)}
+.qitem{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:10px}
+.qitem p{margin:6px 0 0;font-size:14px;color:var(--muted)}
+
+/* История */
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line)}
+th{font-size:13px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+
+/* О проекте */
+.about h3{margin-top:4px}
+.about p{margin:0 0 10px}
+.about ul{margin:0;padding-left:20px}
+.about li{margin-bottom:6px}
+.flow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-weight:600;font-size:15px}
+.flow span{background:var(--primary-soft);color:var(--primary);padding:8px 12px;border-radius:10px}
+.flow em{font-style:normal;color:var(--muted)}
+.contra{border-left:4px solid var(--accent);padding:4px 0 4px 16px;margin:10px 0}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;opacity:0;transition:.25s;pointer-events:none;z-index:50;font-size:15px}
+.toast.on{opacity:1;transform:translateX(-50%)}
+footer{border-top:1px solid var(--line);padding:24px 0;font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap bar">
+    <button class="brand" data-go="home" aria-label="На главную">
+      <span class="logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 5h16v10H9l-5 4V5z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><path d="M8 9h8M8 12h5" stroke="#F08A24" stroke-width="2" stroke-linecap="round"/></svg></span>
+      <span>СобесТрен <small>ИТП</small></span>
+    </button>
+    <nav>
+      <button data-go="setup">Тренировка</button>
+      <button data-go="bank">Банк вопросов</button>
+      <button data-go="history">История</button>
+      <button data-go="about">О проекте</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ===== ГЛАВНАЯ ===== -->
+  <section class="view" id="v-home">
+    <div class="hero">
+      <div>
+        <span class="eyebrow">Для выпускников кафедры ИТП</span>
+        <h1>Отрепетируйте собеседование до того, как оно случится</h1>
+        <p class="lead">Тренажёр проводит пробное интервью на junior-позицию, задаёт уточняющие вопросы и показывает, какие компетенции вы раскрыли, а над чем стоит поработать.</p>
+        <div class="row">
+          <button class="btn" data-go="setup">Начать тренировку →</button>
+          <button class="btn ghost" data-go="about">Как это работает</button>
+        </div>
+        <div class="stats">
+          <div><b id="st-q">—</b><span>вопросов в банке</span></div>
+          <div><b>6</b><span>должностей</span></div>
+          <div><b>6</b><span>компетенций</span></div>
+          <div><b>0 ₽</b><span>без регистрации</span></div>
+        </div>
+      </div>
+      <div class="demo" aria-hidden="true">
+        <div class="tag">Интервьюер</div>
+        <div class="m">Расскажите о ситуации, когда в команде возник конфликт. Как вы его решили?</div>
+        <div class="m u">На хакатоне мы спорили о функциях MVP. Я предложил оценить каждую по влиянию и трудозатратам…</div>
+        <div class="tag">Интервьюер</div>
+        <div class="m">А чем всё закончилось? Какой был результат — можно в цифрах?</div>
+        <div class="score"><span>Структура STAR · 8/10</span><span>Команда · 7/10</span><span>Слова-паразиты · 0</span></div>
+      </div>
+    </div>
+    <div class="grid g3">
+      <div class="card"><div class="step-n">1</div><h3>Выберите роль и формат</h3><p class="muted small">6 junior-должностей, на которые идут выпускники ИТП, и 4 типа интервью: HR, поведенческое, кейсовое, стрессовое.</p></div>
+      <div class="card"><div class="step-n">2</div><h3>Ответьте на вопросы</h3><p class="muted small">Пишите так, как сказали бы вслух. Таймер подскажет, если ответ затянулся, а интервьюер уточнит, если не хватает конкретики.</p></div>
+      <div class="card"><div class="step-n">3</div><h3>Получите разбор</h3><p class="muted small">Балл по 6 компетенциям, разбор каждого ответа, речевые метрики и план, что подтянуть к следующей попытке.</p></div>
+    </div>
+  </section>
+
+  <!-- ===== НАСТРОЙКА ===== -->
+  <section class="view" id="v-setup">
+    <h2>Настройте собеседование</h2>
+    <p class="muted">Все роли уровня junior. Вопросы опираются на ваш реальный опыт: учёбу, проекты, стажировки, хакатоны.</p>
+
+    <div class="section-t">1. Должность</div>
+    <div class="opt-grid" id="roles"></div>
+
+    <div class="section-t">2. Тип интервью</div>
+    <div class="opt-grid" id="types"></div>
+
+    <div class="section-t">3. Параметры</div>
+    <div class="row" style="gap:28px">
+      <div>
+        <div class="small muted" style="margin-bottom:6px">Количество вопросов</div>
+        <div class="seg" id="count"></div>
+      </div>
+      <label class="check"><input type="checkbox" id="opt-hints" checked> Показывать подсказки во время интервью</label>
+      <label class="check"><input type="checkbox" id="opt-voice"> Озвучивать вопросы</label>
+    </div>
+
+    <div class="row" style="margin-top:32px">
+      <button class="btn" id="start-btn">Начать собеседование →</button>
+      <span class="small muted" id="setup-sum"></span>
+    </div>
+  </section>
+
+  <!-- ===== ИНТЕРВЬЮ ===== -->
+  <section class="view" id="v-interview">
+    <div class="iv">
+      <div class="chat">
+        <div class="chat-h">
+          <div class="avatar">HR</div>
+          <div><b id="iv-title">Интервьюер</b><div class="small muted" id="iv-sub"></div></div>
+        </div>
+        <div class="msgs" id="msgs" aria-live="polite"></div>
+        <div class="composer">
+          <textarea id="answer" placeholder="Ваш ответ… (Ctrl + Enter — отправить)" disabled></textarea>
+          <div class="comp-row">
+            <div class="row" style="gap:8px">
+              <span class="timer" id="timer">0:00</span>
+              <span class="small muted" id="wc">0 слов</span>
+            </div>
+            <div class="row" style="gap:8px">
+              <button class="btn ghost" id="skip-btn" disabled>Пропустить</button>
+              <button class="btn" id="send-btn" disabled>Ответить</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <aside class="side">
+        <div class="card">
+          <div class="small muted">Прогресс</div>
+          <div class="prog"><i id="prog"></i></div>
+          <div class="small" id="prog-t">Вопрос 0 из 0</div>
+        </div>
+        <div class="card" id="hint-card">
+          <h3>Подсказка</h3>
+          <div id="hint-body"></div>
+        </div>
+        <div class="card">
+          <button class="linkbtn" id="finish-early">Завершить досрочно и получить отчёт</button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===== ОТЧЁТ ===== -->
+  <section class="view" id="v-report">
+    <div class="row" style="justify-content:space-between;margin-bottom:18px">
+      <div><h2>Результаты собеседования</h2><div class="muted" id="rep-sub"></div></div>
+      <div class="row">
+        <button class="btn ghost" id="copy-btn">Скопировать отчёт</button>
+        <button class="btn" id="again-btn">Пройти ещё раз</button>
+      </div>
+    </div>
+    <div class="rep-top">
+      <div class="card">
+        <div class="ring" id="ring"></div>
+        <div class="verdict" id="verdict"></div>
+        <div class="small muted" style="text-align:center;margin-top:6px" id="delta"></div>
+      </div>
+      <div class="card">
+        <h3>Профиль компетенций</h3>
+        <div id="radar"></div>
+      </div>
+      <div class="card">
+        <h3>Баллы по компетенциям</h3>
+        <div class="bars" id="bars"></div>
+      </div>
+    </div>
+    <div class="grid g2" style="margin-bottom:16px">
+      <div class="card">
+        <h3>Что подтянуть к следующей попытке</h3>
+        <ol id="recs" style="margin:0;padding-left:20px"></ol>
+      </div>
+      <div class="card">
+        <h3>Речевые метрики</h3>
+        <div id="metrics"></div>
+      </div>
+    </div>
+    <h3 style="margin:24px 0 12px">Разбор ответов</h3>
+    <div id="answers"></div>
+    <p class="notice" style="margin-top:20px">Оценка автоматическая. Алгоритм смотрит на структуру ответа (STAR), конкретику и цифры, профессиональную лексику, длину и чистоту речи. Это тренировочный ориентир, а не заключение рекрутера.</p>
+  </section>
+
+  <!-- ===== БАНК ВОПРОСОВ ===== -->
+  <section class="view" id="v-bank">
+    <h2>Банк вопросов</h2>
+    <p class="muted">Все вопросы, из которых тренажёр собирает собеседование, с пояснением, что проверяет интервьюер и как построить сильный ответ.</p>
+    <div class="filters">
+      <select id="f-type"></select>
+      <select id="f-role"></select>
+      <span class="small muted" id="f-count" style="align-self:center"></span>
+    </div>
+    <div id="bank-list"></div>
+  </section>
+
+  <!-- ===== ИСТОРИЯ ===== -->
+  <section class="view" id="v-history">
+    <div class="row" style="justify-content:space-between">
+      <div><h2>История попыток</h2><p class="muted" style="margin:0">Хранится только в этом браузере.</p></div>
+      <button class="btn ghost" id="clear-hist">Очистить историю</button>
+    </div>
+    <div class="card" style="margin-top:18px" id="hist-box"></div>
+  </section>
+
+  <!-- ===== О ПРОЕКТЕ ===== -->
+  <section class="view about" id="v-about">
+    <h2>О проекте</h2>
+    <p class="muted">Командный проект по курсу «Управление человеческими ресурсами», кафедра ИТП. Цифровое решение для функции УЧР «Подбор персонала».</p>
+    <div class="grid g2" style="margin-top:18px">
+      <div class="card">
+        <h3>Проблема</h3>
+        <p>Выпускникам нужна практика собеседований, но репетировать не с кем: живых интервьюеров (HR, преподавателей, карьерных консультантов) мало, их время дорогое. Особенно это касается междисциплинарных позиций, куда идут выпускники ИТП: на них спрашивают и про проекты, и про рынок, и про цифры.</p>
+        <div class="contra"><b>Противоречие (ТРИЗ):</b> чтобы уверенно пройти собеседование, нужно много практики с интервьюером, но интервьюеров мало и их время ограничено.</div>
+        <div class="contra"><b>ИКР:</b> собеседование проводится и оценивается само, без участия человека, в любое время и сколько угодно раз.</div>
+      </div>
+      <div class="card">
+        <h3>Заказчик и пользователи</h3>
+        <ul>
+          <li><b>Заказчик:</b> выпускники кафедры ИТП (в лице представителя группы).</li>
+          <li><b>Пользователи:</b> студенты 4 курса и выпускники, которые ищут первую работу или стажировку.</li>
+          <li><b>Бенефициар:</b> кафедра ИТП. Трудоустроенные выпускники укрепляют её репутацию.</li>
+        </ul>
+        <h3 style="margin-top:16px">Как работает</h3>
+        <div class="flow"><span>Роль и формат</span><em>→</em><span>Интервью</span><em>→</em><span>Уточнения</span><em>→</em><span>Оценка</span><em>→</em><span>Отчёт</span></div>
+      </div>
+      <div class="card">
+        <h3>Модель компетенций</h3>
+        <div id="about-comps"></div>
+      </div>
+      <div class="card">
+        <h3>Как устроена оценка</h3>
+        <ul>
+          <li><b>Структура:</b> есть ли в поведенческом ответе Ситуация, Задача, Действие и Результат (STAR); есть ли в кейсе план по шагам.</li>
+          <li><b>Конкретика:</b> цифры, сроки, проценты, личный вклад («я сделал», а не только «мы»).</li>
+          <li><b>Лексика:</b> слова, характерные для каждой компетенции (рынок, гипотеза, метрика, команда…).</li>
+          <li><b>Подача:</b> длина ответа, слова-паразиты, неуверенные формулировки.</li>
+          <li><b>Уточняющие вопросы:</b> тренажёр переспрашивает, если ответ слишком короткий или в нём нет результата.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3>Аналоги</h3>
+      <table>
+        <thead><tr><th>Сервис</th><th>Что делает</th><th>Чем мы отличаемся</th></tr></thead>
+        <tbody>
+          <tr><td><b>ИИ-тренажёр Т1</b></td><td>HR-интервью, live coding и техническое собеседование для IT-специалистов, отчёт с рекомендациями. Вход через Telegram.</td><td>Мы ориентированы на не-IT роли выпускников ИТП.</td></tr>
+          <tr><td><b>Final Round AI</b></td><td>Мок-интервью и подсказчик во время реального собеседования. Англоязычный, платный.</td><td>Бесплатно, на русском, без подсказок во время реального интервью.</td></tr>
+          <tr><td><b>Yoodli</b></td><td>Коучинг подачи речи: темп, слова-паразиты.</td><td>Оцениваем не только подачу, но и содержание по модели компетенций.</td></tr>
+          <tr><td><b>Big Interview</b></td><td>Курс по поведенческим интервью с практикой.</td><td>Короткие тренировки под конкретную роль, без курса.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid g2" style="margin-top:16px">
+      <div class="card">
+        <h3>Метрики успеха для заказчика</h3>
+        <ul>
+          <li>Доля выпускников, прошедших 3 и более тренировки.</li>
+          <li>Рост среднего балла между первой и третьей попыткой.</li>
+          <li>Самооценка уверенности перед собеседованием до и после (опрос).</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Планы развития</h3>
+        <ul>
+          <li>Подключение нейросети (GigaChat) для живого диалога и разбора ответов.</li>
+          <li>Режим «своя вакансия»: вопросы по тексту объявления.</li>
+          <li>Голосовой ввод ответа и анализ речи.</li>
+          <li>Мобильная версия.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">СобесТрен ИТП · учебный прототип командного проекта по УЧР · кафедра ИТП</div></footer>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   1. НАСТРОЙКИ ТРЕНАЖЁРА
+   Здесь меняются основные параметры без правки логики.
+   ========================================================= */
+const CONFIG = {
+  questionCounts: [5, 7, 10],      // варианты длины собеседования
+  defaultCount: 5,
+  maxFollowUps: 2,                 // сколько раз за интервью можно задать уточняющий вопрос
+  idealWords: [40, 200],           // «хорошая» длина ответа в словах
+  answerTimeSec: 120,              // рекомендуемое время на ответ (таймер жёлтый после, красный после ×1.5)
+  typingDelayMs: [600, 1100],      // «интервьюер печатает…»
+  storageKey: 'sobestren_itp_history_v1',
+  // Место для будущего подключения нейросети (например, GigaChat через серверную функцию).
+  // Сейчас не используется: тренажёр работает полностью офлайн.
+  llmEndpoint: null
+};
+
+/* =========================================================
+   2. СПРАВОЧНИКИ: должности, типы интервью, компетенции
+   ========================================================= */
+const ROLES = [
+  { id:'pm',    name:'Менеджер проектов',                   desc:'Планирование, сроки, риски, работа с заказчиком и командой.', focus:['team','analyt','comm'] },
+  { id:'innov', name:'Менеджер инновационных проектов',     desc:'Проверка гипотез, MVP, рынок, работа с R&D и коммерциализация.', focus:['entre','analyt'] },
+  { id:'prod',  name:'Продакт-менеджер',                    desc:'Метрики продукта, приоритизация, исследования пользователей.', focus:['analyt','entre'] },
+  { id:'ba',    name:'Бизнес-аналитик',                     desc:'Сбор требований, процессы, данные и гипотезы.', focus:['analyt','comm'] },
+  { id:'tt',    name:'Специалист по коммерциализации технологий', desc:'Патенты, лицензии, спин-оффы, гранты, работа с учёными.', focus:['entre','comm'] },
+  { id:'vc',    name:'Аналитик венчурного фонда / акселератора', desc:'Оценка стартапов, юнит-экономика, рынок и команда.', focus:['analyt','entre'] }
+];
+
+const TYPES = [
+  { id:'hr',     name:'HR-скрининг',   desc:'Мотивация, опыт, ожидания. Первый этап почти любого отбора.' },
+  { id:'beh',    name:'Поведенческое', desc:'Ситуации из вашего опыта. Отвечайте по STAR.' },
+  { id:'case',   name:'Кейсовое',      desc:'Задачи под выбранную должность: как бы вы действовали.' },
+  { id:'stress', name:'Стрессовое',    desc:'Неудобные вопросы и давление. Тренирует спокойствие.' }
+];
+const TYPE_NAME = Object.fromEntries(TYPES.map(t=>[t.id,t.name]));
+
+const COMPS = {
+  comm:   { name:'Коммуникация',              short:'Коммуникация', desc:'Ясно, по делу, без слов-паразитов и лишней неуверенности.' },
+  struct: { name:'Структурность мышления',    short:'Структура',    desc:'Ответ построен по STAR или по шагам, есть логика и вывод.' },
+  entre:  { name:'Предпринимательское мышление', short:'Предприн.', desc:'Думает о клиенте, рынке, ценности, рисках и проверке гипотез.' },
+  analyt: { name:'Аналитика и работа с данными', short:'Аналитика', desc:'Опирается на цифры и метрики, умеет обосновать решение.' },
+  team:   { name:'Командная работа',          short:'Команда',      desc:'Показывает свою роль, умеет договариваться и решать конфликты.' },
+  motiv:  { name:'Мотивация и соответствие роли', short:'Мотивация', desc:'Понимает, зачем ему эта работа, и связывает опыт с должностью.' }
+};
+const COMP_ORDER = ['comm','struct','entre','analyt','team','motiv'];
+
+/* Словари основ слов для каждой компетенции (ищем слова, начинающиеся с этих основ) */
+const COMP_KW = {
+  entre:  ['рын','клиент','потребител','пользовател','гипотез','mvp','ценност','монетиз','риск','инвест','конкурент','стартап','бизнес','выручк','прибыл','масштаб','продукт','спрос','проблем','патент','лиценз','коммерциал','юнит','пилот','партнер','грант','идея','идеи','сегмент','tam','sam','som'],
+  analyt: ['данн','метрик','анализ','проанализ','конверс','гипотез','a/b','сравн','показател','рассчит','посчит','kpi','воронк','сегмент','исследов','опрос','цифр','статистик','ltv','cac','retention','отток','дашборд','процент','доля','динамик','excel','sql','тест','измер','оцен'],
+  team:   ['команд','коллег','договор','роль','распредел','обсуд','компромисс','поддерж','лидер','вместе','встреч','мнени','конфликт','участник','согласов','делегир','помог','объясн','выслуш','доверие'],
+  motiv:  ['интерес','хоч','разви','цел','ценност','компани','рост','вклад','мотив','нрав','вдохнов','карьер','учит','научит','полез','важно','смысл','профессионал'],
+  comm:   []
+};
+
+/* Советы по каждой компетенции — попадают в план «что подтянуть» */
+const COMP_ADVICE = {
+  comm:   'Тренируйте ответы на 1–2 минуты: главная мысль в первом предложении, без слов-паразитов и «наверное».',
+  struct: 'Стройте поведенческие ответы по STAR: Ситуация → Задача → Действие → Результат. В кейсах сначала озвучьте план из 3–4 шагов.',
+  entre:  'Говорите языком ценности: клиент, проблема, рынок, гипотеза, деньги. Покажите, как вы проверяете идеи, прежде чем вкладываться.',
+  analyt: 'Добавляйте цифры: сроки, проценты, деньги, число пользователей. Объясняйте, какой метрикой вы измерите результат.',
+  team:   'Показывайте свою роль в команде: что сделали лично вы, как договаривались, как решали разногласия.',
+  motiv:  'Свяжите опыт и цели с должностью: почему именно эта роль, что вы в ней уже умеете и чему хотите научиться.'
+};
+
+/* Разговорные слова-паразиты и неуверенные формулировки */
+const FILLERS = ['ну','типа','короче','как бы','в общем','в принципе','это самое','так сказать','как-то так','собственно','блин'];
+const HEDGES  = ['наверное','может быть','не знаю','вроде','не уверен','не уверена','сложно сказать','как-то'];
+
+/* Маркеры STAR и структуры */
+const STAR = {
+  s: { words:['когда','однажды','проекте','стажировке','практике','хакатоне','университете','курсе','кейс-чемпионате','олимпиаде','семестре'], phrases:['в рамках','во время','в ходе','у нас был','была ситуация','в прошлом году','на работе','в команде'] },
+  t: { words:['задача','задачей','задачу','цель','целью','требовалось','поручили','стояла','стоял','дедлайн'], phrases:['нужно было','необходимо было','надо было','мне нужно','передо мной'] },
+  a: { words:['предложил','предложила','провел','провела','организовал','организовала','разработал','разработала','проанализировал','проанализировала','договорился','договорилась','собрал','собрала','запустил','запустила','написал','написала','подготовил','подготовила','нашел','нашла','внедрил','внедрила','решил','решила','сделал','сделала','создал','создала','взял','взяла','распределил','распределила','выяснил','выяснила','посчитал','посчитала','опросил','опросила','протестировал','протестировала','объяснил','объяснила','убедил','убедила','поговорил','поговорила','составил','составила','настроил','настроила'], phrases:[] },
+  r: { words:['итог','итоге','получилось','удалось','добились','добился','добилась','вырос','выросла','выросло','увеличил','увеличилась','увеличили','сократил','сократили','снизил','снизили','результат','результате','успешно','позволило','заняли','победили','выиграли'], phrases:['в результате','в итоге','что дало','это помогло'] }
+};
+const PLAN_MARKERS = ['во-первых','во-вторых','в-третьих','сначала','затем','далее','потом','первое','второе','третье','шаг','этап','итак','таким образом','в итоге','вывод','после этого'];
+
+/* =========================================================
+   3. БАНК ВОПРОСОВ
+   type: hr | beh | case | stress;  roles: 'all' или список id должностей
+   comps: какие компетенции проверяет; kw: основы слов «сильного» ответа
+   ========================================================= */
+const BANK = [
+  // ---------- HR-скрининг ----------
+  { id:'intro', type:'hr', roles:'all', comps:['comm','motiv'], text:'Расскажите о себе: что вы изучали, какой у вас опыт и почему вас интересует эта позиция?',
+    checks:'Умение коротко представить себя и связать опыт с должностью.', tip:'Формула «настоящее → прошлое → будущее»: кто вы сейчас, какой опыт привёл сюда (1–2 проекта с результатом), почему хотите именно эту роль. До 2 минут.', kw:['проект','стажир','опыт','интерес','хоч','цел','выпускн','кафедр','команд'] },
+  { id:'hr-why', type:'hr', roles:'all', comps:['motiv'], text:'Почему вы хотите работать именно у нас и именно на этой позиции?',
+    checks:'Подготовился ли кандидат: знает ли компанию и понимает ли роль.', tip:'Назовите 1–2 факта о компании (продукт, рынок, ценности) и свяжите их со своими интересами и опытом.', kw:['продукт','рын','ценност','разви','команд','задач','интерес','масштаб','клиент'] },
+  { id:'hr-strong', type:'hr', roles:'all', comps:['motiv','comm'], text:'Какие ваши сильные стороны пригодятся на этой должности? Приведите пример.',
+    checks:'Самопонимание и подтверждение качеств фактами.', tip:'Назовите 2 качества, важные для роли, и к каждому — короткий пример с результатом.', kw:['пример','проект','умею','результат','команд','анализ','организ'] },
+  { id:'hr-weak', type:'hr', roles:'all', comps:['comm','struct'], text:'Назовите свою слабую сторону. Что вы делаете, чтобы с ней работать?',
+    checks:'Честность, рефлексия и способность развиваться.', tip:'Реальная, но не критичная для роли слабость + конкретные шаги, которые вы уже предпринимаете, + первый результат.', kw:['работаю','учусь','стараюсь','курс','практик','улучш','заметил','планир'] },
+  { id:'hr-3y', type:'hr', roles:'all', comps:['motiv','entre'], text:'Где вы видите себя через 3 года?',
+    checks:'Есть ли карьерный план и совпадает ли он с тем, что может дать компания.', tip:'Покажите рост внутри профессии: каким специалистом хотите стать, какие задачи вести. Избегайте «открою свой бизнес и уйду».', kw:['разви','рост','эксперт','руковод','проект','навык','компани','ответствен'] },
+  { id:'hr-salary', type:'hr', roles:'all', comps:['comm','analyt'], text:'Каковы ваши ожидания по заработной плате?',
+    checks:'Знает ли кандидат рынок и умеет ли спокойно говорить о деньгах.', tip:'Назовите вилку, основанную на исследовании рынка (вакансии, обзоры), и покажите гибкость в зависимости от задач и обучения.', kw:['рын','вилк','диапазон','изучил','вакансий','обзор','гибк','обсуд','тыс'] },
+  { id:'hr-project', type:'hr', roles:'all', comps:['entre','team'], text:'Какой проект за время учёбы вы считаете самым значимым? Какой была ваша роль?',
+    checks:'Реальный опыт, личный вклад и умение говорить о результате.', tip:'Коротко: суть проекта, ваша роль, 1–2 ваших действия и измеримый итог (заняли место, получили пилот, X пользователей).', kw:['проект','роль','команд','результат','стартап','клиент','пилот','заказчик','разработ'] },
+  { id:'hr-itp', type:'hr', roles:'all', comps:['motiv','entre'], text:'Чем вы как выпускник направления «инновационное предпринимательство» отличаетесь от выпускника экономического или технического вуза?',
+    checks:'Понимает ли кандидат свою уникальную ценность.', tip:'Сделайте упор на сочетание: понимаете и технологию, и рынок; умеете проверять гипотезы и считать экономику проекта. Подкрепите примером.', kw:['технолог','рын','гипотез','проект','стартап','экономик','коммерциал','команд','инновац'] },
+
+  // ---------- Поведенческие (STAR) ----------
+  { id:'b-conflict', type:'beh', roles:'all', comps:['team','struct'], text:'Расскажите о ситуации, когда в команде возник конфликт. Как вы его разрешили?',
+    checks:'Умение договариваться и брать ответственность.', tip:'STAR: в чём был спор → какую задачу вы себе поставили → что лично сделали (выслушали, предложили критерий) → чем закончилось.', kw:['конфликт','спор','мнени','договор','компромисс','выслуш','обсуд','решени'] },
+  { id:'b-uncert', type:'beh', roles:'all', comps:['analyt','entre','struct'], text:'Приведите пример, когда вам пришлось принять решение при нехватке информации.',
+    checks:'Как кандидат действует в неопределённости.', tip:'Покажите, как вы быстро собрали минимум данных, взвесили риски и приняли решение, а потом проверили, было ли оно верным.', kw:['информац','данн','риск','решени','гипотез','провер','вариант','быстро'] },
+  { id:'b-fail', type:'beh', roles:'all', comps:['entre','struct'], text:'Расскажите о проекте или идее, которые не сработали. Что вы из этого вынесли?',
+    checks:'Отношение к ошибкам и способность учиться.', tip:'Честно опишите провал, свою долю ответственности и конкретный вывод, который вы потом применили.', kw:['ошибк','провал','вывод','понял','научил','измен','гипотез','клиент'] },
+  { id:'b-init', type:'beh', roles:'all', comps:['entre','team','struct'], text:'Опишите ситуацию, когда вы взяли на себя инициативу без прямого поручения.',
+    checks:'Проактивность, предпринимательская позиция.', tip:'Что заметили → почему решили действовать → что сделали → какой эффект получили.', kw:['заметил','предложил','инициатив','сам','запустил','организ','улучш'] },
+  { id:'b-persuade', type:'beh', roles:'all', comps:['comm','team','struct'], text:'Расскажите, как вам удалось убедить кого-то принять вашу точку зрения.',
+    checks:'Аргументация и влияние без давления.', tip:'Покажите, что вы поняли интересы собеседника и подобрали аргументы (цифры, пример, пилот) под них.', kw:['аргумент','убедил','интерес','данн','пример','показал','пилот','выгод'] },
+  { id:'b-deadline', type:'beh', roles:'all', comps:['struct','team'], text:'Расскажите о случае, когда вы работали в условиях жёсткого дедлайна. Как вы справились?',
+    checks:'Планирование и устойчивость под нагрузкой.', tip:'Опишите, как приоритизировали задачи, что отложили или делегировали и уложились ли в срок.', kw:['дедлайн','срок','приоритет','план','распредел','успел','делегир'] },
+  { id:'b-data', type:'beh', roles:'all', comps:['analyt','struct'], text:'Приведите пример, когда вы использовали данные, чтобы обосновать решение.',
+    checks:'Data-driven подход.', tip:'Какие данные собрали, как анализировали, какой вывод сделали и как это повлияло на решение — с цифрами.', kw:['данн','анализ','опрос','метрик','excel','таблиц','вывод','цифр'] },
+  { id:'b-learn', type:'beh', roles:'all', comps:['motiv','struct'], text:'Расскажите о ситуации, когда вам пришлось быстро освоить что-то новое.',
+    checks:'Обучаемость — ключевое качество junior-специалиста.', tip:'Что нужно было освоить и к какому сроку, как учились (источники, люди, практика) и что получилось.', kw:['освоил','изучил','курс','разобрал','практик','научил','инструмент'] },
+
+  // ---------- Кейсы: менеджер проектов ----------
+  { id:'c-pm-late', type:'case', roles:['pm'], comps:['analyt','team','comm'], text:'Проект отстаёт от графика на 3 недели, до сдачи остался месяц. Ваши действия?',
+    checks:'Управление сроками и рисками, работа с заказчиком.', tip:'Сначала диагностика причин, затем варианты (сократить объём, добавить ресурс, перенести срок), оценка каждого и прозрачная коммуникация с заказчиком.', kw:['причин','приоритет','ресурс','риск','заказчик','план','срок','объем','scope','критическ','перенос'] },
+  { id:'c-pm-req', type:'case', roles:['pm','ba'], comps:['comm','team'], text:'Заказчик постоянно меняет требования посреди проекта. Как вы будете с этим работать?',
+    checks:'Управление изменениями и ожиданиями.', tip:'Фиксация требований, процедура запроса изменений, оценка влияния на сроки и бюджет, договорённости с заказчиком.', kw:['требован','фиксир','изменен','оцен','бюджет','срок','договор','согласов','приоритет'] },
+  { id:'c-pm-hack', type:'case', roles:['pm','innov'], comps:['struct','analyt','team'], text:'Вам нужно организовать хакатон на 100 участников за 2 месяца. Как вы спланируете проект?',
+    checks:'Декомпозиция, планирование, бюджет и риски.', tip:'Цель и метрики успеха → этапы (партнёры, площадка, привлечение, проведение) → сроки и ответственные → бюджет → риски и план Б.', kw:['цел','этап','план','бюджет','риск','команд','роль','срок','партнер','площадк','участник'] },
+  { id:'c-pm-sick', type:'case', roles:['pm'], comps:['team','comm'], text:'Ключевой участник команды заболел за неделю до дедлайна. Что вы сделаете?',
+    checks:'Управление ресурсами в кризисе.', tip:'Оценка, что именно горит; перераспределение задач; упрощение объёма; честная коммуникация с заказчиком о рисках.', kw:['перераспредел','задач','приоритет','заказчик','риск','команд','помощ','замен'] },
+  // ---------- Кейсы: инновационные проекты ----------
+  { id:'c-in-mat', type:'case', roles:['innov','tt'], comps:['entre','analyt'], text:'Университет разработал новый композитный материал. Как за 2 недели проверить, есть ли у него рынок?',
+    checks:'Customer development и быстрая проверка гипотез.', tip:'Гипотезы о сегментах и применении → интервью с 10–15 потенциальными клиентами → сравнение с аналогами по цене и свойствам → вывод о спросе.', kw:['гипотез','сегмент','клиент','интервью','рын','конкурент','аналог','спрос','применени','цен'] },
+  { id:'c-in-pivot', type:'case', roles:['innov','prod'], comps:['entre','analyt'], text:'Проект идёт полгода, но пилотные клиенты не готовы платить. Продолжать, менять или закрывать?',
+    checks:'Готовность принимать решения на основе данных, понимание pivot.', tip:'Разберите, почему не платят (ценность, цена, сегмент), какие сигналы есть, и предложите критерии решения: что должно произойти за N недель, чтобы продолжить.', kw:['ценност','клиент','сегмент','pivot','гипотез','критери','данн','деньг','цен','закры','метрик'] },
+  { id:'c-in-funnel', type:'case', roles:['innov'], comps:['entre','struct'], text:'Компания запускает программу внутренних инноваций. Как бы вы построили отбор идей от сотрудников?',
+    checks:'Понимание инновационной воронки и Stage-Gate.', tip:'Этапы: сбор идей → первичный фильтр по критериям → проработка и прототип → защита → пилот. Для каждого этапа — критерий перехода.', kw:['этап','критери','воронк','отбор','прототип','пилот','оцен','идея','идеи','сотрудник'] },
+  { id:'c-market', type:'case', roles:['innov','prod','vc'], comps:['analyt','entre','struct'], text:'Оцените объём рынка онлайн-тренажёров собеседований в России. Рассуждайте вслух.',
+    checks:'Структурное мышление и market sizing.', tip:'Сверху вниз: сколько людей ищут работу в год → доля, которая готовится онлайн → доля готовых платить → средний чек. Назовите допущения и итоговую оценку.', kw:['допущ','млн','тыс','доля','процент','чек','сегмент','рын','tam','sam','som','оцен','человек'] },
+  // ---------- Кейсы: продакт ----------
+  { id:'c-pr-ret', type:'case', roles:['prod','ba'], comps:['analyt','struct'], text:'Retention мобильного приложения упал на 15% за месяц. Ваши действия?',
+    checks:'Аналитический подход к продуктовой проблеме.', tip:'Проверьте данные → сегментируйте (платформа, когорта, канал) → свяжите с изменениями (релизы, сезон) → гипотезы → проверка.', kw:['данн','сегмент','когорт','релиз','гипотез','метрик','провер','пользовател','причин','a/b'] },
+  { id:'c-pr-prio', type:'case', roles:['prod','pm'], comps:['analyt','comm'], text:'У вас 10 запросов на новые функции, а ресурсов команды хватит только на 3. Как выберете?',
+    checks:'Приоритизация и аргументация.', tip:'Назовите фреймворк (RICE, ICE, MoSCoW), критерии (влияние на метрику, охват, затраты) и как объясните решение тем, чьи запросы не попали.', kw:['приоритет','rice','ice','moscow','влияни','затрат','метрик','ценност','пользовател','объясн'] },
+  { id:'c-pr-metric', type:'case', roles:['prod'], comps:['analyt'], text:'Как вы поймёте, что новая функция в продукте успешна? Какие метрики выберете?',
+    checks:'Понимание продуктовых метрик.', tip:'Цель функции → основная метрика (использование, конверсия, удержание) → контрольные метрики → A/B-тест и срок оценки.', kw:['метрик','конверс','удержан','retention','a/b','тест','цел','пользовател','контрольн'] },
+  // ---------- Кейсы: бизнес-аналитик ----------
+  { id:'c-ba-dash', type:'case', roles:['ba'], comps:['comm','analyt'], text:'Руководитель просит «дашборд по продажам». Как вы соберёте требования?',
+    checks:'Выявление реальной потребности за запросом.', tip:'Узнайте, какие решения руководитель будет принимать по дашборду, → вопросы и метрики → источники данных → макет → согласование.', kw:['цел','решени','метрик','источник','данн','макет','согласов','вопрос','интервью','пользовател'] },
+  { id:'c-ba-conv', type:'case', roles:['ba','prod'], comps:['analyt','struct'], text:'Конверсия заявок на сайте упала вдвое. Какие гипотезы проверите и в каком порядке?',
+    checks:'Генерация и приоритизация гипотез.', tip:'Сначала технические причины (форма, трекинг), потом трафик (каналы, качество), потом изменения на сайте. Для каждой гипотезы — как проверить.', kw:['гипотез','трафик','канал','форм','трекинг','данн','провер','сегмент','воронк'] },
+  { id:'c-ba-proc', type:'case', roles:['ba'], comps:['analyt','struct'], text:'Согласование договора в компании проходит через 5 участников и занимает 3 недели. Как найдёте узкие места?',
+    checks:'Анализ бизнес-процессов.', tip:'Опишите процесс «как есть» (схема), замерьте время на каждом этапе, найдите ожидания и возвраты, предложите «как должно быть».', kw:['процесс','схем','этап','врем','замер','узк','bpmn','ожидан','оптимиз','участник'] },
+  // ---------- Кейсы: коммерциализация технологий ----------
+  { id:'c-tt-lic', type:'case', roles:['tt','innov'], comps:['entre','analyt'], text:'Для университетской разработки нужно выбрать: продать лицензию на патент или создать стартап. От чего зависит выбор?',
+    checks:'Понимание моделей коммерциализации.', tip:'Сравните по критериям: зрелость технологии (TRL), наличие команды, размер рынка, потребность в инвестициях, риски. Сделайте вывод для типичного случая.', kw:['лиценз','патент','стартап','trl','команд','рын','инвест','риск','роялти','спин'] },
+  { id:'c-tt-sci', type:'case', roles:['tt'], comps:['comm','team'], text:'Учёный не хочет тратить время на коммерциализацию своей разработки. Как вы его вовлечёте?',
+    checks:'Работа с мотивацией и интересами другой стороны.', tip:'Выясните его интересы (публикации, финансирование лаборатории, признание), покажите выгоду и возьмите рутину на себя.', kw:['интерес','выгод','мотив','финансир','публикац','лаборатор','объясн','помощ','врем'] },
+  { id:'c-tt-grant', type:'case', roles:['tt','innov'], comps:['entre','struct'], text:'Как бы вы подготовили заявку на грант Фонда содействия инновациям для команды студентов?',
+    checks:'Знание инструментов поддержки и структурный подход.', tip:'Выбор программы под стадию проекта → требования → описание проблемы, решения, рынка и команды → план работ и бюджет → проверка перед подачей.', kw:['грант','фонд','программ','требован','команд','рын','план','бюджет','заявк','старт'] },
+  // ---------- Кейсы: венчурный аналитик ----------
+  { id:'c-vc-eval', type:'case', roles:['vc'], comps:['analyt','entre'], text:'По каким критериям вы оцените стартап на стадии pre-seed?',
+    checks:'Понимание инвестиционной логики ранней стадии.', tip:'Команда, проблема и рынок, решение и отличие от конкурентов, первые сигналы спроса (трекшн), бизнес-модель. Объясните, почему на pre-seed главное — команда.', kw:['команд','рын','проблем','конкурент','трекшн','бизнес-модел','спрос','масштаб','риск'] },
+  { id:'c-vc-unit', type:'case', roles:['vc','prod','ba'], comps:['analyt'], text:'Подписочный сервис: CAC = 1 500 ₽, ARPU = 500 ₽ в месяц, отток 10% в месяц. Окупается ли клиент?',
+    checks:'Юнит-экономика.', tip:'Средний срок жизни ≈ 1 / 0,1 = 10 месяцев, LTV ≈ 500 × 10 = 5 000 ₽ без учёта маржи. LTV/CAC ≈ 3,3, окупаемость примерно 3 месяца. Значит, окупается; дальше уточнить маржу.', kw:['ltv','cac','месяц','окуп','маржа','отток','срок','arpu','юнит'] },
+  { id:'c-vc-deal', type:'case', roles:['vc'], comps:['analyt','comm'], text:'Основатель просит 20 млн ₽ за 10% компании. Какие вопросы вы зададите, прежде чем обсуждать сделку?',
+    checks:'Критичность мышления и понимание оценки компании.', tip:'Это оценка 200 млн ₽. Спросите, на чём она основана, на что пойдут деньги, какие метрики сейчас, какой план до следующего раунда.', kw:['оценк','метрик','выручк','план','раунд','деньг','рын','команд','200'] },
+
+  // ---------- Стрессовые ----------
+  { id:'s-noexp', type:'stress', roles:'all', comps:['motiv','comm'], text:'У вас почти нет реального опыта. Почему мы должны взять вас, а не кандидата с тремя годами стажа?',
+    checks:'Уверенность и умение показать ценность без опыта.', tip:'Не оправдывайтесь. Назовите, что вы даёте: свежие методы, обучаемость, проектный опыт с результатом, мотивацию расти в этой компании.', kw:['проект','быстро','учусь','мотив','результат','навык','ценност','вклад'] },
+  { id:'s-pen', type:'stress', roles:'all', comps:['comm','entre'], text:'Продайте мне эту ручку.',
+    checks:'Умение сначала выяснить потребность, а не расхваливать товар.', tip:'Начните с вопросов: как часто вы подписываете документы, что важно в ручке? Потом предложите ценность под потребность и закройте сделку.', kw:['вам','потребн','важно','ценност','вопрос','пользу','выгод','удобн'] },
+  { id:'s-nostart', type:'stress', roles:'all', comps:['motiv','entre'], text:'Вы учились на предпринимателя. Почему же вы до сих пор не открыли свой бизнес, а пришли к нам?',
+    checks:'Честная мотивация и отсутствие противоречия с ролью.', tip:'Объясните, что опыт в компании — осознанный шаг: научиться на реальных проектах, рынке и людях. Предпринимательское мышление пригодится и внутри компании.', kw:['опыт','научит','рын','проект','компани','разви','осознан','мышлен'] },
+  { id:'s-useless', type:'stress', roles:'all', comps:['entre','comm'], text:'Через месяц работы вы понимаете, что проект, который вам поручили, бесполезен. Что вы сделаете?',
+    checks:'Смелость и корректность в коммуникации с руководителем.', tip:'Проверите вывод данными, подготовите аргументы и альтернативу, обсудите с руководителем. Не саботируйте и не молчите.', kw:['данн','провер','аргумент','руковод','обсуд','альтернатив','предлож'] },
+  { id:'s-salary', type:'stress', roles:'all', comps:['comm','motiv'], text:'Мы готовы предложить зарплату на 30% ниже ваших ожиданий. Ваша реакция?',
+    checks:'Ведение переговоров под давлением.', tip:'Спокойно уточните, из чего складывается предложение (бонусы, обучение, пересмотр), назовите свою аргументированную вилку и предложите компромисс, например пересмотр через 3–6 месяцев.', kw:['обсуд','пересмотр','бонус','рын','компромисс','обучени','месяц','аргумент','вилк'] },
+  { id:'s-weak', type:'stress', roles:'all', comps:['comm','motiv'], text:'Если честно, ваш прошлый ответ звучал неубедительно. В чём ваша главная ценность для нас — одним предложением?',
+    checks:'Устойчивость к критике и умение говорить кратко.', tip:'Не спорьте и не извиняйтесь. Одна чёткая фраза: «Я умею …, и это даст вам …», затем короткое подтверждение фактом.', kw:['умею','дам','результат','проект','ценност','могу','принесу'] }
+];
+
+/* ---------- Расширение банка (вопросы 43–100) ---------- */
+BANK.push(
+  // HR-скрининг
+  { id:'hr-know', type:'hr', roles:'all', comps:['motiv'], text:'Что вы знаете о нашей компании и её продуктах?',
+    checks:'Подготовка к собеседованию и реальный интерес к работодателю.', tip:'Назовите продукт, клиентов, 1–2 свежие новости или факта и скажите, что из этого вам особенно интересно и почему.', kw:['продукт','рын','клиент','конкурент','новост','сайт','ценност','проект','услуг'] },
+  { id:'hr-offers', type:'hr', roles:'all', comps:['comm','motiv'], text:'Вы рассматриваете другие предложения? На каком вы этапе?',
+    checks:'Честность и умение говорить о приоритетах без давления.', tip:'Ответьте честно и коротко, без названий компаний. Подчеркните, почему эта вакансия для вас в приоритете.', kw:['рассматрива','этап','приоритет','интерес','честн','собеседован','выбор'] },
+  { id:'hr-itp-why', type:'hr', roles:'all', comps:['motiv'], text:'Почему вы выбрали направление «инновационное предпринимательство» при поступлении?',
+    checks:'Осознанность выбора и связь с текущими целями.', tip:'Расскажите, что привлекло вас тогда, что вы получили за время учёбы и как это привело к этой вакансии.', kw:['интерес','технолог','бизнес','стартап','проект','хотел','выбрал','разви','инновац'] },
+  { id:'hr-criteria', type:'hr', roles:'all', comps:['motiv'], text:'Что для вас важно при выборе работодателя?',
+    checks:'Совпадают ли ожидания кандидата с тем, что даёт компания.', tip:'Назовите 2–3 критерия (задачи, наставничество, команда, развитие) и покажите, что в этой компании они есть.', kw:['разви','команд','задач','ценност','обучени','наставни','рост','проект','интерес'] },
+  { id:'hr-critic', type:'hr', roles:'all', comps:['comm','struct'], text:'Как вы реагируете на критику? Приведите пример.',
+    checks:'Зрелость, способность принимать обратную связь.', tip:'Пример: какую критику получили, как отреагировали (выслушали, уточнили), что изменили и какой результат получили.', kw:['обратн','критик','выслуш','уточн','исправ','измен','вывод','научил'] },
+  { id:'hr-org', type:'hr', roles:'all', comps:['struct'], text:'Как вы организуете свою работу, когда задач много?',
+    checks:'Самоорганизация и тайм-менеджмент.', tip:'Опишите свою систему: как собираете задачи, как приоритизируете (например, матрица Эйзенхауэра), какие инструменты используете.', kw:['план','приоритет','задач','календар','трекер','notion','список','срок','эйзенхауэр'] },
+  { id:'hr-format', type:'hr', roles:'all', comps:['comm','motiv'], text:'Когда вы готовы выйти на работу и какой формат вам подходит — офис, гибрид или удалёнка?',
+    checks:'Готовность к условиям и гибкость.', tip:'Назовите конкретную дату или срок, свой предпочтительный формат и покажите готовность подстроиться под команду.', kw:['готов','дат','офис','гибрид','удален','формат','недел','график','команд'] },
+  { id:'hr-ask', type:'hr', roles:'all', comps:['motiv','comm'], text:'Какие вопросы у вас есть к нам?',
+    checks:'Вовлечённость и понимание роли. Ответ «вопросов нет» — минус.', tip:'Задайте 2–3 вопроса: какие задачи будут в первые 3 месяца, как устроена команда, по каким критериям оценивают успех на испытательном сроке.', kw:['задач','команд','критери','испытательн','месяц','разви','наставни','процесс','успех'] },
+
+  // Поведенческие
+  { id:'b-mistake', type:'beh', roles:'all', comps:['team','struct'], text:'Расскажите об ошибке, которая повлияла на других людей. Как вы её исправили?',
+    checks:'Ответственность и умение исправлять последствия.', tip:'STAR: что произошло, кого затронуло, что лично вы сделали для исправления и что изменили, чтобы не повторилось.', kw:['ошибк','исправ','ответствен','команд','извин','вывод','измен','последств'] },
+  { id:'b-hard', type:'beh', roles:'all', comps:['team','comm','struct'], text:'Опишите опыт работы с человеком, с которым было сложно взаимодействовать.',
+    checks:'Эмоциональный интеллект и умение работать с разными людьми.', tip:'Без обвинений: в чём была сложность, как вы попытались понять его мотивы, что поменяли в общении и чем всё закончилось.', kw:['понял','мотив','разговор','общени','договор','выслуш','компромисс','команд'] },
+  { id:'b-multi', type:'beh', roles:'all', comps:['struct','motiv'], text:'Расскажите, как вы совмещали несколько проектов или учёбу с работой.',
+    checks:'Управление нагрузкой и приоритетами.', tip:'Сколько было задач и сроков, как вы планировали время, от чего пришлось отказаться и каких результатов добились.', kw:['совмещ','план','приоритет','врем','график','успел','нагрузк','распредел'] },
+  { id:'b-lead', type:'beh', roles:'all', comps:['team','entre','struct'], text:'Расскажите о ситуации, когда вам пришлось возглавить команду или часть работы.',
+    checks:'Лидерский потенциал junior-специалиста.', tip:'Как вы стали лидером, как распределили задачи, как мотивировали людей и какого результата достигла команда.', kw:['команд','лидер','распредел','роль','мотив','встреч','цел','результат','координ'] },
+  { id:'b-givefb', type:'beh', roles:'all', comps:['comm','team','struct'], text:'Приведите пример, когда вам пришлось дать коллеге неприятную обратную связь.',
+    checks:'Умение говорить сложные вещи корректно.', tip:'Опишите, как выбрали момент и форму (наедине, по фактам, с предложением), как отреагировал человек и что изменилось.', kw:['обратн','факт','наедин','предлож','корректн','объясн','измен','поддерж'] },
+  { id:'b-client', type:'beh', roles:'all', comps:['entre','comm','struct'], text:'Расскажите о работе с заказчиком или пользователями. Как вы выясняли их потребности?',
+    checks:'Клиентоориентированность и навыки исследования.', tip:'Кто был клиентом, какими методами выясняли потребности (интервью, опрос, наблюдение), что узнали неожиданного и как это изменило решение.', kw:['клиент','заказчик','пользовател','интервью','опрос','потребн','проблем','узнал','измен'] },
+  { id:'b-process', type:'beh', roles:'all', comps:['analyt','entre','struct'], text:'Опишите случай, когда вы улучшили какой-то процесс — в учёбе, проекте или на работе.',
+    checks:'Инициативность и системное мышление.', tip:'Каким был процесс, что в нём было неэффективно, что вы изменили и как измерили эффект (время, ошибки, деньги).', kw:['процесс','улучш','автоматиз','сократ','врем','эффект','измен','оптимиз','шаблон'] },
+  { id:'b-disagree', type:'beh', roles:'all', comps:['comm','team','struct'], text:'Расскажите о ситуации, когда вы были не согласны с решением руководителя или преподавателя.',
+    checks:'Умение отстаивать позицию и при этом сохранять отношения.', tip:'Как вы аргументировали своё мнение (факты, данные), как прошёл разговор и что вы сделали после — даже если решение не изменилось.', kw:['аргумент','мнени','факт','данн','обсуд','руковод','преподават','решени','принял'] },
+  { id:'b-goal', type:'beh', roles:'all', comps:['motiv','struct'], text:'Расскажите о цели, которой вы добились, хотя это было непросто.',
+    checks:'Настойчивость и ориентация на результат.', tip:'Какая была цель и почему она была сложной, какие препятствия встретились, как вы их преодолели и чем закончилось.', kw:['цел','добил','препятстви','сложн','упорн','план','результат','преодол'] },
+  { id:'b-pitch', type:'beh', roles:'all', comps:['comm','struct'], text:'Расскажите о самой сложной презентации или защите проекта. Как вы готовились?',
+    checks:'Публичные выступления и подготовка.', tip:'Перед кем выступали, что было сложного, как готовились (структура, репетиции, вопросы жюри) и какой получили результат.', kw:['презентац','защит','жюри','репетир','структур','слайд','вопрос','выступлени','подготов'] },
+
+  // Кейсы: менеджер проектов
+  { id:'c-pm-budget', type:'case', roles:['pm'], comps:['analyt','comm'], text:'Бюджет проекта превышен на 20%, а впереди ещё треть работ. Что вы сделаете?',
+    checks:'Контроль бюджета и прозрачность перед заказчиком.', tip:'Найдите причину перерасхода, пересчитайте прогноз до конца проекта, предложите варианты (сократить объём, найти резерв, согласовать доплату) и вынесите их на обсуждение.', kw:['бюджет','причин','затрат','прогноз','приоритет','заказчик','резерв','сократ','вариант','план'] },
+  { id:'c-pm-week1', type:'case', roles:['pm'], comps:['struct','team'], text:'Вы стали менеджером нового проекта. Что вы сделаете в первую неделю?',
+    checks:'Понимание старта проекта.', tip:'Встреча с заказчиком (цели, критерии успеха), знакомство с командой и ролями, анализ стейкхолдеров, черновик плана и списка рисков, договорённости о коммуникации.', kw:['цел','заказчик','команд','стейкхолдер','устав','план','риск','встреч','роль','критери'] },
+  { id:'c-pm-crm', type:'case', roles:['pm','ba'], comps:['analyt','struct'], text:'Какие риски вы видите во внедрении CRM в компании на 50 человек и как будете ими управлять?',
+    checks:'Идентификация и управление рисками.', tip:'Назовите 3–4 риска (сопротивление сотрудников, перенос данных, интеграции, сроки), оцените вероятность и влияние и для каждого предложите меру.', kw:['риск','сопротивлен','обучени','данн','интеграц','срок','бюджет','вероятн','мер','пилот'] },
+  { id:'c-pm-agile', type:'case', roles:['pm','prod'], comps:['analyt','struct'], text:'Когда вы выберете Agile, а когда каскадную модель управления проектом? Приведите пример.',
+    checks:'Знание методологий и осознанный выбор.', tip:'Каскад — когда требования понятны и стабильны (стройка, внедрение по регламенту). Agile — когда высокая неопределённость и нужна обратная связь (новый цифровой продукт). Приведите пример каждого.', kw:['agile','scrum','каскад','waterfall','требован','неопределен','итерац','спринт','обратн'] },
+  { id:'c-pm-status', type:'case', roles:['pm'], comps:['comm'], text:'Как вы будете информировать руководство о проекте, если всё идёт не по плану?',
+    checks:'Честная коммуникация и управление ожиданиями.', tip:'Сообщайте рано и по фактам: что случилось, как это влияет на сроки и бюджет, какие есть варианты и какое решение нужно от руководства.', kw:['статус','отчет','риск','честн','вариант','решени','план','регулярн','факт','срок'] },
+
+  // Кейсы: инновационные проекты
+  { id:'c-in-mvp', type:'case', roles:['innov','prod'], comps:['entre','struct'], text:'Как бы вы сделали MVP сервиса аренды лабораторного оборудования между университетами?',
+    checks:'Умение проверять гипотезу минимальными силами.', tip:'Сформулируйте главную гипотезу (лаборатории готовы сдавать и арендовать), выберите самый дешёвый способ её проверить (таблица + чат + ручной подбор), определите метрику успеха.', kw:['mvp','гипотез','клиент','лендинг','ценност','тест','сегмент','минимальн','пилот','метрик'] },
+  { id:'c-in-cust', type:'case', roles:['innov','prod','tt'], comps:['entre','comm'], text:'Как провести интервью с потенциальными клиентами, чтобы не получить ложных «да, я бы купил»?',
+    checks:'Навыки customer development.', tip:'Спрашивайте о прошлом поведении, а не о будущем: «Когда вы последний раз сталкивались с этой проблемой? Как решали? Сколько потратили?» Не рассказывайте о своей идее до конца интервью.', kw:['интервью','прошл','опыт','проблем','вопрос','наводящ','факт','клиент','поведени'] },
+  { id:'c-in-trl', type:'case', roles:['innov','tt'], comps:['entre','analyt'], text:'Технология находится на уровне готовности TRL 3. Что это значит для планирования проекта и для инвестора?',
+    checks:'Понимание стадий развития технологии.', tip:'TRL 3 — концепция подтверждена в лаборатории, до промышленного образца далеко. Значит, высокий технический риск, долгие сроки, нужны грантовые или ранние деньги и план испытаний.', kw:['trl','лаборатор','прототип','риск','инвест','этап','испытан','срок','грант'] },
+  { id:'c-in-sales', type:'case', roles:['innov'], comps:['team','comm'], text:'Отдел продаж скептически относится к вашему инновационному пилоту. Как добиться его поддержки?',
+    checks:'Работа со стейкхолдерами внутри компании.', tip:'Выясните их опасения (отнимет время, не продастся), покажите выгоду для их KPI, вовлеките 1–2 лояльных менеджеров в пилот и поделитесь первыми результатами.', kw:['опасени','выгод','kpi','вовлеч','пилот','результат','интерес','договор','объясн'] },
+  { id:'c-in-earlym', type:'case', roles:['innov'], comps:['analyt','entre'], text:'Как измерить успех инновационного проекта на ранней стадии, когда выручки ещё нет?',
+    checks:'Метрики неопределённости.', tip:'Метрики обучения: сколько гипотез проверено, конверсия интервью в пилоты, вовлечённость пилотных пользователей, готовность платить (предзаказы, письма о намерениях).', kw:['метрик','гипотез','конверс','интервью','пилот','вовлечен','предзаказ','пользовател','провер'] },
+
+  // Кейсы: продакт-менеджер
+  { id:'c-pr-onb', type:'case', roles:['prod'], comps:['analyt','entre'], text:'Только 20% новых пользователей завершают регистрацию. Как вы улучшите онбординг?',
+    checks:'Работа с воронкой и пользовательским опытом.', tip:'Разложите регистрацию на шаги и найдите, где отваливаются, посмотрите записи сессий или опросите пользователей, предложите гипотезы (меньше полей, вход через соцсети) и проверьте A/B-тестом.', kw:['воронк','шаг','конверс','гипотез','a/b','пользовател','поля','данн','опрос','упрост'] },
+  { id:'c-pr-bigclient', type:'case', roles:['prod'], comps:['comm','analyt'], text:'Директор хочет добавить функцию, которую попросил один крупный клиент. Как вы поступите?',
+    checks:'Баланс интересов бизнеса и продукта.', tip:'Выясните реальную проблему клиента, оцените, нужна ли функция другим пользователям и сколько она стоит, предложите варианты (кастом, общее решение, отказ) с аргументами.', kw:['проблем','клиент','пользовател','оцен','стоимост','приоритет','вариант','аргумент','выручк'] },
+  { id:'c-pr-research', type:'case', roles:['prod','innov'], comps:['entre','analyt'], text:'Как вы проведёте исследование пользователей для нового продукта, если бюджет — 0 рублей?',
+    checks:'Находчивость и знание методов исследования.', tip:'Интервью со знакомыми из целевой аудитории, опрос в профильных чатах и сообществах, анализ отзывов на конкурентов, наблюдение. Главное — сегмент и правильные вопросы.', kw:['интервью','опрос','сообществ','чат','отзыв','конкурент','сегмент','наблюден','аудитор'] },
+  { id:'c-pr-ab', type:'case', roles:['prod','ba'], comps:['analyt'], text:'A/B-тест показал рост конверсии на 2%, но выборка маленькая. Будете ли вы внедрять изменение?',
+    checks:'Статистическая грамотность.', tip:'Проверьте статистическую значимость и мощность теста. Если результат незначим — продлите тест или оцените риск: дешёвое и безопасное изменение можно внедрить, дорогое — нет.', kw:['значим','выборк','статист','тест','продл','риск','конверс','p-value','доверительн'] },
+  { id:'c-pr-comp', type:'case', roles:['prod'], comps:['entre','analyt'], text:'Конкурент выпустил функцию, которой у вас нет. Ваши действия?',
+    checks:'Стратегическое мышление вместо копирования.', tip:'Не копируйте сразу: выясните, решает ли функция проблему ваших пользователей, как на неё реагирует рынок, и сравните с вашими приоритетами.', kw:['конкурент','пользовател','проблем','приоритет','рын','анализ','ценност','стратеги','данн'] },
+  { id:'c-pr-jtbd', type:'case', roles:['prod','innov'], comps:['entre'], text:'Для какой «работы» (Job to be Done) люди «нанимают» сервис доставки еды? Как это влияет на продукт?',
+    checks:'Понимание подхода JTBD.', tip:'Разные задачи: «быстро поесть на работе», «устроить вечер без готовки», «накормить гостей». Каждая задача диктует свои приоритеты: скорость, выбор, цена, упаковка.', kw:['работ','задач','jtbd','пользовател','скорост','цен','сегмент','ситуац','потребн'] },
+
+  // Кейсы: бизнес-аналитик
+  { id:'c-ba-conflict', type:'case', roles:['ba'], comps:['comm','team'], text:'Два отдела дают противоречащие требования к одной системе. Как вы поступите?',
+    checks:'Управление требованиями и стейкхолдерами.', tip:'Выясните цели каждого отдела за требованиями, найдите общий интерес, подготовьте варианты с последствиями и вынесите решение на владельца продукта или руководителя.', kw:['требован','цел','отдел','интерес','вариант','согласов','встреч','приоритет','владел'] },
+  { id:'c-ba-story', type:'case', roles:['ba','prod'], comps:['struct','analyt'], text:'Как бы вы описали требования к функции «восстановление пароля»?',
+    checks:'Умение формализовать требования.', tip:'User story («Как пользователь, я хочу…, чтобы…»), основной и альтернативные сценарии (нет почты, ссылка устарела), критерии приёмки, требования безопасности.', kw:['user','story','критери','приемк','сценари','пользовател','ошибк','требован','безопасн'] },
+  { id:'c-ba-data', type:'case', roles:['ba','vc'], comps:['analyt','struct'], text:'Вам дали выгрузку продаж на 50 000 строк. С чего вы начнёте анализ?',
+    checks:'Базовая аналитическая гигиена.', tip:'Уточните вопрос бизнеса, проверьте качество данных (пропуски, дубли, выбросы), посчитайте базовые показатели и разрезы (по времени, товарам, регионам), затем ищите аномалии.', kw:['вопрос','качеств','пропуск','дубл','выброс','сводн','разрез','показател','excel','sql'] },
+  { id:'c-ba-kpi', type:'case', roles:['ba','pm'], comps:['analyt'], text:'Какие KPI вы предложите для отдела поддержки клиентов и почему?',
+    checks:'Выбор метрик под цели.', tip:'Время первого ответа, время решения обращения, доля решённых с первого раза, удовлетворённость клиентов (CSAT). Свяжите каждый KPI с целью бизнеса и учтите, чтобы метрики не противоречили друг другу.', kw:['kpi','врем','ответ','решени','csat','nps','удовлетвор','обращени','цел','метрик'] },
+  { id:'c-ba-hiring', type:'case', roles:['ba'], comps:['analyt','struct'], text:'Как вы опишете процесс найма в компании, чтобы найти, на каком этапе теряются кандидаты?',
+    checks:'Анализ процесса и воронки (связь с УЧР).', tip:'Опишите воронку найма (отклик → скрининг → интервью → оффер → выход), посчитайте конверсию и время на каждом этапе, найдите узкое место и опросите кандидатов, которые отказались.', kw:['воронк','этап','конверс','кандидат','отклик','оффер','врем','узк','процесс','опрос'] },
+  { id:'c-ba-forecast', type:'case', roles:['ba'], comps:['analyt'], text:'Руководитель просит прогноз продаж на следующий квартал. Как вы его построите?',
+    checks:'Подход к прогнозированию.', tip:'Соберите историю продаж, учтите сезонность и тренд, добавьте известные события (акции, цены), сделайте базовый, оптимистичный и пессимистичный сценарии и объясните допущения.', kw:['истори','сезонн','тренд','сценари','допущ','прогноз','данн','модел','квартал'] },
+
+  // Кейсы: коммерциализация технологий
+  { id:'c-tt-ip', type:'case', roles:['tt'], comps:['entre'], text:'Студенты хотят запустить стартап на разработке, сделанной в университете. Какие вопросы по интеллектуальной собственности нужно решить?',
+    checks:'Знание основ работы с ИС.', tip:'Кому принадлежат права (служебное произведение, договор с вузом), защищена ли разработка (патент, ноу-хау), на каких условиях стартап получит права (лицензия, доля вуза).', kw:['патент','прав','лиценз','ноу-хау','университет','договор','доля','служебн','интеллектуальн'] },
+  { id:'c-tt-partner', type:'case', roles:['tt','innov'], comps:['entre','comm'], text:'Как найти индустриального партнёра для пилотного внедрения университетской разработки?',
+    checks:'Навыки бизнес-девелопмента.', tip:'Определите, у каких компаний есть проблема, которую решает разработка, используйте выставки, отраслевые ассоциации, выпускников и технопарки, подготовьте короткое ценностное предложение и условия пилота.', kw:['компани','проблем','выставк','ассоциац','выпускник','технопарк','ценност','пилот','предлож','контакт'] },
+  { id:'c-tt-price', type:'case', roles:['tt','vc'], comps:['analyt','entre'], text:'Как оценить стоимость лицензии на технологию?',
+    checks:'Подходы к оценке нематериальных активов.', tip:'Три подхода: затратный (сколько стоила разработка), сравнительный (похожие сделки), доходный (доля будущей прибыли лицензиата — роялти). Обычно комбинируют.', kw:['затрат','сравнит','доход','роялти','прибыл','сделк','оценк','рын','лиценз'] },
+  { id:'c-tt-pitch', type:'case', roles:['tt','vc','innov'], comps:['comm','entre'], text:'Расскажите за минуту, что войдёт в питч технологии очистки воды для инвестора.',
+    checks:'Умение упаковать технологию для бизнеса.', tip:'Проблема и её масштаб → решение и чем оно лучше аналогов → рынок → бизнес-модель → команда → сколько денег нужно и на что.', kw:['проблем','решени','аналог','рын','бизнес-модел','команд','инвест','деньг','преимуществ'] },
+  { id:'c-tt-team', type:'case', roles:['tt'], comps:['team','entre'], text:'У разработки есть сильные учёные, но нет предпринимателя. Как собрать команду проекта?',
+    checks:'Понимание роли команды в коммерциализации.', tip:'Определите недостающие роли (бизнес-лидер, продажи, финансы), ищите их через акселераторы, студентов-предпринимателей и выпускников, договоритесь о долях и ролях учёных.', kw:['роль','команд','предпринимател','акселератор','студент','доля','договор','учен','компетенц'] },
+  { id:'c-tt-gov', type:'case', roles:['tt','innov'], comps:['entre'], text:'Какие инструменты государственной поддержки инноваций вы знаете и как выбрать подходящий?',
+    checks:'Ориентация в экосистеме поддержки.', tip:'Фонд содействия инновациям, Сколково, региональные фонды, университетские акселераторы и технопарки. Выбор зависит от стадии проекта, суммы и требований к софинансированию.', kw:['фонд','сколково','грант','акселератор','технопарк','программ','стади','софинансир','поддержк'] },
+
+  // Кейсы: венчурный аналитик
+  { id:'c-vc-tam', type:'case', roles:['vc'], comps:['analyt'], text:'Стартап заявляет рынок 50 млрд ₽. Как вы проверите, реальна ли эта цифра?',
+    checks:'Критический анализ рыночных оценок.', tip:'Посчитайте снизу вверх: число реальных клиентов × средний чек × частота. Сравните с отраслевыми отчётами и отделите весь рынок (TAM) от доступного стартапу (SAM, SOM).', kw:['снизу','клиент','чек','tam','sam','som','отчет','доля','расчет','допущ'] },
+  { id:'c-vc-flags', type:'case', roles:['vc'], comps:['analyt','entre'], text:'Какие «красные флаги» в питч-деке заставят вас насторожиться?',
+    checks:'Насмотренность и критичность.', tip:'Нет конкурентов, рынок «весь мир», нереалистичный прогноз выручки, команда без нужных компетенций, нет общения с клиентами, непонятно, на что пойдут деньги.', kw:['конкурент','рын','прогноз','команд','клиент','деньг','метрик','нереалист','риск'] },
+  { id:'c-vc-memo', type:'case', roles:['vc'], comps:['struct','analyt'], text:'Как бы вы структурировали инвестиционный меморандум по стартапу?',
+    checks:'Структурное мышление аналитика.', tip:'Резюме и рекомендация → проблема и решение → рынок → продукт и трекшн → бизнес-модель и юнит-экономика → конкуренты → команда → условия сделки → риски.', kw:['резюме','рекомендац','рын','продукт','трекшн','юнит','конкурент','команд','риск','сделк'] },
+  { id:'c-vc-runway', type:'case', roles:['vc','prod'], comps:['analyt'], text:'У стартапа 6 млн ₽ на счёте и расходы 1 млн ₽ в месяц. Что это значит и о чём вы спросите основателей?',
+    checks:'Финансовая грамотность: burn rate и runway.', tip:'Runway — 6 месяцев, а поднять раунд обычно занимает 3–6 месяцев. Спросите про план привлечения денег, возможность сократить расходы и какие метрики покажут к раунду.', kw:['runway','burn','месяц','раунд','расход','сократ','метрик','план','привлеч'] },
+  { id:'c-vc-nocomp', type:'case', roles:['vc','innov'], comps:['analyt','comm'], text:'Основатели утверждают, что у них нет конкурентов. Как вы отреагируете?',
+    checks:'Понимание конкуренции шире прямых аналогов.', tip:'Конкуренты есть всегда: прямые, косвенные и «ничего не делать». Спросите, как клиенты решают проблему сейчас, и попросите карту альтернатив.', kw:['конкурент','косвенн','альтернатив','клиент','проблем','решают','рын','аналог'] },
+  { id:'c-vc-help', type:'case', roles:['vc'], comps:['entre','team'], text:'Портфельная компания третий месяц подряд не выполняет план по выручке. Как фонд может помочь?',
+    checks:'Понимание роли инвестора после сделки.', tip:'Разберите причины вместе с основателями (продукт, продажи, рынок), помогите контактами, наймом и экспертизой, пересмотрите план и метрики, обсудите сокращение расходов.', kw:['причин','основател','продаж','контакт','найм','эксперт','план','метрик','расход','поддерж'] },
+
+  // Стрессовые
+  { id:'s-rejected', type:'stress', roles:'all', comps:['motiv','comm'], text:'Вас уже отклоняли на других собеседованиях? Как вы думаете, почему?',
+    checks:'Рефлексия и устойчивость к неудачам.', tip:'Признайте честно, назовите вывод, который сделали, и что уже изменили в подготовке. Не обвиняйте работодателей.', kw:['вывод','понял','измен','подготов','опыт','улучш','научил','обратн'] },
+  { id:'s-30sec', type:'stress', roles:'all', comps:['comm','motiv'], text:'У вас 30 секунд. Чем вы будете полезны нам в первый месяц?',
+    checks:'Краткость и конкретика под давлением.', tip:'2–3 предложения: что вы сможете делать сразу (анализ, подготовка материалов, исследования) и как быстро войдёте в задачи.', kw:['смогу','сразу','задач','анализ','быстро','помог','умею','вклад','месяц'] },
+  { id:'s-overtime', type:'stress', roles:'all', comps:['comm','motiv'], text:'У нас часто бывают переработки по вечерам и выходным. Вас это устраивает?',
+    checks:'Честность о своих границах и лояльность.', tip:'Скажите, что готовы к пиковым нагрузкам в важные моменты, и уточните, как часто они бывают и как компенсируются. Это нормальный вопрос, а не слабость.', kw:['готов','пиков','компенс','уточн','баланс','част','важн','проект','график'] },
+  { id:'s-grades', type:'stress', roles:'all', comps:['motiv','comm'], text:'Ваш средний балл не самый высокий. Почему мы должны обратить на вас внимание?',
+    checks:'Умение переключить фокус на свои сильные стороны.', tip:'Не оправдывайтесь. Скажите, куда вы вкладывали время (проекты, стажировки, хакатоны) и какие результаты это дало.', kw:['проект','стажир','хакатон','результат','опыт','навык','практик','время','вклад'] },
+  { id:'s-leave', type:'stress', roles:'all', comps:['motiv'], text:'Выпускники обычно уходят через год. Зачем нам тратить на вас время?',
+    checks:'Долгосрочная мотивация.', tip:'Покажите, что вам важен рост внутри компании, и назовите, что вас удержит: задачи, развитие, команда. Подкрепите своим планом на 2–3 года.', kw:['рост','разви','план','компани','задач','команд','долгосроч','остат','карьер'] },
+  { id:'s-wrong', type:'stress', roles:'all', comps:['comm'], text:'Я считаю, что ваш подход к работе в корне неверный. Что скажете?',
+    checks:'Спокойствие и аргументация при прямом несогласии.', tip:'Не обороняйтесь. Уточните, что именно кажется неверным, признайте разумные замечания и спокойно аргументируйте свою позицию фактами.', kw:['уточн','почему','аргумент','факт','соглас','понимаю','позиц','пример','обсуд'] }
+);
+
+/* =========================================================
+   4. СОСТОЯНИЕ И ПОМОЩНИКИ
+   ========================================================= */
+const S = { role:'pm', type:'beh', count:CONFIG.defaultCount, hints:true, voice:false,
+            plan:[], idx:0, items:[], current:null, awaitingFollow:false, followUps:0, started:0, timerId:null, tStart:0, busy:false, report:null };
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clamp = (v,a=0,b=10) => Math.max(a, Math.min(b, v));
+const r1 = v => Math.round(v*10)/10;
+const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+const shuffle = arr => { const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; };
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+const roleById = id => ROLES.find(r=>r.id===id);
+const colorFor = v => v>=7 ? 'var(--good)' : v>=4.5 ? 'var(--mid)' : 'var(--bad)';
+const plural = (n, f) => { const m10=n%10, m100=n%100; return f[(m10===1&&m100!==11)?0:(m10>=2&&m10<=4&&(m100<10||m100>=20))?1:2]; };
+
+function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('on'); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('on'),2200); }
+
+const store = {
+  get(){ try{ return JSON.parse(localStorage.getItem(CONFIG.storageKey)) || []; }catch(e){ return []; } },
+  set(v){ try{ localStorage.setItem(CONFIG.storageKey, JSON.stringify(v)); }catch(e){} }
+};
+
+/* =========================================================
+   5. АНАЛИЗ ОТВЕТА (алгоритм оценки)
+   ========================================================= */
+const NB = '[^a-zа-я0-9]';
+function countPhrase(t, p){
+  const re = new RegExp('(^|'+NB+')'+p.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?='+NB+'|$)', 'g');
+  return (t.match(re)||[]).length;
+}
+function tokens(t){ return t.match(/[a-zа-я0-9]+(?:[-/][a-zа-я0-9]+)*/g) || []; }
+function stemHits(toks, stems){ return toks.filter(w => stems.some(s => w.startsWith(s))).length; }
+function hasMarker(t, toks, m){ return toks.some(w=>m.words.includes(w)) || m.phrases.some(p=>countPhrase(t,p)>0); }
+
+function analyze(text){
+  const t = (' '+text+' ').toLowerCase().replace(/ё/g,'е');
+  const toks = tokens(t);
+  const n = toks.length;
+  const fillers = {}; let fillerTotal = 0;
+  FILLERS.forEach(f => { const c = countPhrase(t,f); if(c){ fillers[f]=c; fillerTotal+=c; } });
+  let hedges = 0; HEDGES.forEach(h => hedges += countPhrase(t,h));
+  const star = {
+    s: hasMarker(t,toks,STAR.s),
+    t: hasMarker(t,toks,STAR.t),
+    a: hasMarker(t,toks,STAR.a) || /(^|[^а-я])я\s+([а-я]+\s+)?[а-я]+(л|ла|лся|лась)(?=[^а-я]|$)/.test(t),
+    r: hasMarker(t,toks,STAR.r) || /\d+\s?%/.test(t)
+  };
+  const starCount = [star.s,star.t,star.a,star.r].filter(Boolean).length;
+  const plan = PLAN_MARKERS.reduce((a,p)=>a+(countPhrase(t,p)>0?1:0),0);
+  const hasNum = /\d/.test(t);
+  const ya = toks.filter(w=>['я','мне','меня','мной','лично'].includes(w)).length;
+  const my = toks.filter(w=>['мы','нам','нас','нами'].includes(w)).length;
+  return { n, toks, fillers, fillerTotal, hedges, star, starCount, plan, hasNum, ya, my };
+}
+
+function lengthScore(n){
+  const [lo,hi] = CONFIG.idealWords;
+  if(n<8) return 1; if(n<20) return 3.5; if(n<lo) return 6.5;
+  if(n<=hi) return 9.5; if(n<=hi*1.5) return 8; return 6;
+}
+
+/* Оценка одного вопроса (основной ответ + уточнения) по компетенциям 0–10 */
+function scoreItem(item){
+  const q = item.q;
+  const text = item.answers.join('\n');
+  const a = analyze(text);
+  item.a = a;
+  const measured = new Set(['comm', ...q.comps]);
+  if(q.type==='beh' || q.type==='case') measured.add('struct');
+  const sc = {};
+  if(item.skipped || a.n===0){
+    measured.forEach(c=>sc[c]=0);
+    item.scores=sc; item.total=0;
+    item.plus=[]; item.minus=['Вопрос пропущен. Подготовьте ответ заранее: такие вопросы задают часто.'];
+    return item;
+  }
+  const qkw = stemHits(a.toks, q.kw||[]);
+  const lenCap = a.n<20 ? 4.5 : 10;
+  const kwScore = c => clamp(Math.min(lenCap, 2 + (stemHits(a.toks, COMP_KW[c]) + qkw)*1.3));
+
+  measured.forEach(c=>{
+    let v;
+    switch(c){
+      case 'comm':
+        v = lengthScore(a.n) - Math.min(3, a.fillerTotal/Math.max(a.n,1)*100*0.6) - Math.min(2, a.hedges*0.7);
+        break;
+      case 'struct': {
+        const starV = a.starCount*2.2 + (a.n>=CONFIG.idealWords[0]?1.2:0);
+        const planV = 2 + a.plan*1.6 + (a.n>=CONFIG.idealWords[0]?1:0);
+        v = q.type==='case' ? Math.max(planV, starV*0.9) : Math.max(starV, planV*0.8);
+        v = Math.min(v, lenCap);
+        break; }
+      case 'analyt': v = kwScore(c) + (a.hasNum?1.5:0); break;
+      case 'team':   v = kwScore(c) + (a.ya>0?0.8:-0.8); break;
+      default:       v = kwScore(c);
+    }
+    sc[c] = r1(clamp(v));
+  });
+  item.scores = sc;
+  const vals = Object.values(sc);
+  item.total = r1(vals.reduce((x,y)=>x+y,0)/vals.length);
+
+  // Сильные стороны и зоны роста по ответу
+  const plus=[], minus=[];
+  const [lo,hi] = CONFIG.idealWords;
+  if(a.n>=lo && a.n<=hi) plus.push('Оптимальная длина ответа.');
+  if(q.type==='beh' && a.starCount>=3) plus.push('Хорошая структура по STAR.');
+  if(q.type==='case' && a.plan>=2) plus.push('Рассуждение разбито на понятные шаги.');
+  if(a.hasNum) plus.push('Есть конкретика в цифрах.');
+  if(a.fillerTotal===0 && a.n>=30) plus.push('Чистая речь без слов-паразитов.');
+  if(qkw>=3) plus.push('Используете профессиональную лексику по теме вопроса.');
+  if(a.ya>0 && q.comps.includes('team')) plus.push('Видна ваша личная роль.');
+
+  if(a.n<20) minus.push('Ответ слишком короткий. Раскройте мысль на 1–2 минуты (примерно 60–150 слов).');
+  if(a.n>hi*1.5) minus.push('Ответ затянут. Оставьте главное и уложитесь в 2 минуты.');
+  if(q.type==='beh'){
+    if(!a.star.s) minus.push('Начните с контекста: где и когда это было (Ситуация).');
+    if(!a.star.a) minus.push('Покажите личный вклад: «я предложил…», «я провёл…».');
+    if(!a.star.r) minus.push('Закончите результатом, лучше в цифрах.');
+  }
+  if(q.type==='case' && a.plan<2 && a.n>=20) minus.push('Озвучьте план по шагам: «сначала… затем… в итоге…».');
+  if(!a.hasNum && q.comps.includes('analyt')) minus.push('Добавьте цифры: метрики, сроки, деньги, проценты.');
+  if(a.fillerTotal>=2) minus.push('Слова-паразиты: '+Object.entries(a.fillers).map(([w,c])=>'«'+w+'» ×'+c).join(', ')+'.');
+  if(a.hedges>=2) minus.push('Меньше неуверенности («наверное», «может быть»). Говорите утвердительно.');
+  if(a.my>a.ya*2 && a.my>=3) minus.push('Много «мы». Уточните, что сделали лично вы.');
+  if(qkw<2 && a.n>=20) minus.push('Ответ общий. Используйте термины по теме вопроса и конкретные примеры.');
+  item.plus = plus.slice(0,3); item.minus = minus.slice(0,4);
+  return item;
+}
+
+/* Решение об уточняющем вопросе (правила) */
+function followUpFor(q, text){
+  if(S.followUps >= CONFIG.maxFollowUps) return null;
+  const a = analyze(text);
+  if(a.n < 15) return 'Можете раскрыть подробнее? Приведите конкретный пример из учёбы, стажировки или проекта.';
+  if(q.type==='beh' && !a.star.r) return 'А чем всё закончилось? Какой был результат — можно в цифрах?';
+  if(q.type==='beh' && a.my > a.ya*2 && a.my>=3) return 'Понял. А что именно сделали лично вы?';
+  if(q.type==='case' && !a.hasNum && q.comps.includes('analyt')) return 'Хорошо. А как вы измерите результат? Какие цифры или метрики посмотрите?';
+  return null;
+}
+
+/* =========================================================
+   6. СБОРКА СОБЕСЕДОВАНИЯ ИЗ БАНКА
+   ========================================================= */
+function buildPlan(roleId, typeId, count){
+  const fits = q => q.roles==='all' || q.roles.includes(roleId);
+  const pool = type => shuffle(BANK.filter(q=>q.type===type && fits(q) && q.id!=='intro'));
+  const mix = {
+    hr:     [['hr',count-1],['beh',99]],
+    beh:    [['hr',1],['beh',count-2],['case',99]],
+    case:   [['beh',1],['case',count-2],['beh',99]],
+    stress: [['stress',count-2],['case',1],['beh',99]]
+  }[typeId];
+  const plan = [BANK.find(q=>q.id==='intro')];
+  const used = new Set(['intro']);
+  for(const [type, n] of mix){
+    for(const q of pool(type)){
+      if(plan.length>=count) break;
+      if(n!==99 && plan.filter(p=>p.type===type).length>=n) break;
+      if(!used.has(q.id)){ plan.push(q); used.add(q.id); }
+    }
+  }
+  // если вопросов не хватило — добираем любыми подходящими
+  for(const q of shuffle(BANK.filter(fits))){ if(plan.length>=count) break; if(!used.has(q.id)){ plan.push(q); used.add(q.id); } }
+  return plan;
+}
+
+/* =========================================================
+   7. ЭКРАНЫ И НАВИГАЦИЯ
+   ========================================================= */
+const ROUTES = ['home','setup','bank','history','about'];
+function show(view, push=true){
+  if(S.timerId && view!=='interview'){ stopTimer(); }
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on', v.id==='v-'+view));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on', b.dataset.go===view || (view==='interview'&&b.dataset.go==='setup') || (view==='report'&&b.dataset.go==='setup')));
+  if(view==='history') renderHistory();
+  if(push && ROUTES.includes(view)){ try{ history.replaceState(null,'', view==='home' ? location.pathname : '#'+view); }catch(e){ location.hash = view==='home'?'':view; } }
+  window.scrollTo({top:0});
+}
+document.addEventListener('click', e=>{
+  const b = e.target.closest('[data-go]'); if(!b) return;
+  if(S.current && $('#v-interview').classList.contains('on') && b.dataset.go!=='interview'){
+    if(!b.dataset.confirmed){ toast('Интервью идёт. Нажмите ещё раз, чтобы выйти без отчёта.'); b.dataset.confirmed='1'; setTimeout(()=>delete b.dataset.confirmed, 2500); return; }
+    resetInterview();
+  }
+  show(b.dataset.go);
+});
+window.addEventListener('hashchange', ()=>{ const h=location.hash.slice(1); if(ROUTES.includes(h)) show(h,false); });
+
+/* ---------- Настройка ---------- */
+function renderSetup(){
+  $('#roles').innerHTML = ROLES.map(r=>`<button class="opt ${r.id===S.role?'on':''}" data-role="${r.id}"><b>${esc(r.name)}</b><span>${esc(r.desc)}</span></button>`).join('');
+  $('#types').innerHTML = TYPES.map(t=>`<button class="opt ${t.id===S.type?'on':''}" data-type="${t.id}"><b>${esc(t.name)}</b><span>${esc(t.desc)}</span></button>`).join('');
+  $('#count').innerHTML = CONFIG.questionCounts.map(c=>`<button class="${c===S.count?'on':''}" data-count="${c}">${c}</button>`).join('');
+  const mins = Math.round(S.count*2.2);
+  $('#setup-sum').textContent = `${roleById(S.role).name} · ${TYPE_NAME[S.type]} · ${S.count} ${plural(S.count,['вопрос','вопроса','вопросов'])} · ≈ ${mins} мин`;
+}
+$('#roles').addEventListener('click', e=>{ const b=e.target.closest('[data-role]'); if(b){ S.role=b.dataset.role; renderSetup(); }});
+$('#types').addEventListener('click', e=>{ const b=e.target.closest('[data-type]'); if(b){ S.type=b.dataset.type; renderSetup(); }});
+$('#count').addEventListener('click', e=>{ const b=e.target.closest('[data-count]'); if(b){ S.count=+b.dataset.count; renderSetup(); }});
+$('#opt-hints').addEventListener('change', e=>S.hints=e.target.checked);
+$('#opt-voice').addEventListener('change', e=>S.voice=e.target.checked);
+$('#start-btn').addEventListener('click', startInterview);
+
+/* ---------- Интервью ---------- */
+const REACT = {
+  normal: ['Спасибо, понял.','Хорошо, принято.','Спасибо за ответ.','Понятно, двигаемся дальше.','Интересно, спасибо.'],
+  stress: ['Хм. Допустим.','Не очень убедительно, но идём дальше.','Понятно. Следующий вопрос.','Ладно.']
+};
+
+function addMsg(text, cls, meta){
+  const d = document.createElement('div');
+  d.className = 'msg '+cls;
+  d.innerHTML = esc(text) + (meta?`<span class="meta">${esc(meta)}</span>`:'');
+  $('#msgs').appendChild(d);
+  $('#msgs').scrollTop = $('#msgs').scrollHeight;
+  return d;
+}
+async function botSay(text, isQuestion){
+  const t = document.createElement('div'); t.className='typing'; t.innerHTML='<i></i><i></i><i></i>';
+  $('#msgs').appendChild(t); $('#msgs').scrollTop=$('#msgs').scrollHeight;
+  const [a,b] = CONFIG.typingDelayMs; await sleep(a + Math.random()*(b-a));
+  t.remove();
+  addMsg(text, 'bot'+(isQuestion?' q':''));
+  if(isQuestion && S.voice) speak(text);
+}
+function speak(text){
+  try{ if(!window.speechSynthesis) return; speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='ru-RU'; u.rate=1.02; speechSynthesis.speak(u); }catch(e){}
+}
+function setInput(on){
+  $('#answer').disabled=!on; $('#send-btn').disabled=!on; $('#skip-btn').disabled=!on;
+  if(on){ $('#answer').focus(); startTimer(); } else stopTimer();
+}
+function startTimer(){
+  stopTimer(); S.tStart=Date.now();
+  const el=$('#timer'); el.className='timer';
+  S.timerId=setInterval(()=>{
+    const s=Math.floor((Date.now()-S.tStart)/1000);
+    el.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+    el.className='timer'+(s>CONFIG.answerTimeSec*1.5?' over':s>CONFIG.answerTimeSec?' warn':'');
+  },500);
+}
+function stopTimer(){ if(S.timerId){ clearInterval(S.timerId); S.timerId=null; } }
+function elapsed(){ return S.tStart? Math.round((Date.now()-S.tStart)/1000) : 0; }
+
+function updateProgress(){
+  const n=S.plan.length, i=Math.min(S.idx+1,n);
+  $('#prog').style.width = (S.idx/n*100)+'%';
+  $('#prog-t').textContent = `Вопрос ${i} из ${n}`;
+}
+function updateHint(q){
+  const card=$('#hint-card');
+  card.style.display = S.hints ? '' : 'none';
+  if(!S.hints) return;
+  const starBlock = `<div class="star"><b>S</b><span>Ситуация: где и когда</span><b>T</b><span>Задача: что нужно было сделать</span><b>A</b><span>Действие: что сделали лично вы</span><b>R</b><span>Результат: чем закончилось, в цифрах</span></div>`;
+  const body = q.type==='beh' ? starBlock
+    : q.type==='case' ? '<p class="small" style="margin:0 0 8px">Рассуждайте вслух по шагам:</p><div class="star"><b>1</b><span>Уточните цель и ограничения</span><b>2</b><span>Разбейте задачу на части</span><b>3</b><span>Предложите действия и метрики</span><b>4</b><span>Сделайте вывод</span></div>'
+    : q.type==='stress' ? '<p class="small" style="margin:0">Не оправдывайтесь и не спорьте. Пауза, спокойный тон, один чёткий аргумент и факт в подтверждение.</p>'
+    : '<p class="small" style="margin:0">Отвечайте 1–2 минуты. Свяжите свой опыт с должностью и подкрепите фактом.</p>';
+  $('#hint-body').innerHTML = `<div style="margin-bottom:10px">${q.comps.map(c=>`<span class="chip">${COMPS[c].short}</span>`).join('')}</div>` + body;
+}
+
+function resetInterview(){
+  stopTimer(); try{ speechSynthesis.cancel(); }catch(e){}
+  S.current=null; S.items=[]; S.idx=0; S.followUps=0; S.awaitingFollow=false; S.busy=false;
+}
+
+async function startInterview(){
+  resetInterview();
+  S.plan = buildPlan(S.role, S.type, S.count);
+  S.started = Date.now();
+  const role = roleById(S.role);
+  $('#iv-title').textContent = 'Интервьюер · '+TYPE_NAME[S.type];
+  $('#iv-sub').textContent = role.name+' (junior)';
+  $('#msgs').innerHTML=''; $('#answer').value=''; $('#wc').textContent='0 слов'; $('#timer').textContent='0:00';
+  show('interview');
+  updateProgress();
+  setInput(false);
+  const greet = S.type==='stress'
+    ? `Добрый день. У меня мало времени, поэтому сразу к делу. Собеседование на позицию «${role.name}», ${S.plan.length} ${plural(S.plan.length,['вопрос','вопроса','вопросов'])}.`
+    : `Здравствуйте! Спасибо, что пришли. Сегодня собеседование на позицию «${role.name}», уровень junior. Я задам ${S.plan.length} ${plural(S.plan.length,['вопрос','вопроса','вопросов'])}, отвечайте так, как сказали бы вслух.`;
+  await botSay(greet,false);
+  askCurrent();
+}
+
+async function askCurrent(){
+  const q = S.plan[S.idx];
+  S.current = { q, answers:[], times:[], followQ:null, skipped:false };
+  updateProgress(); updateHint(q);
+  await botSay(q.text, true);
+  setInput(true);
+}
+
+async function submit(skip=false){
+  if(S.busy || !S.current) return;
+  const text = $('#answer').value.trim();
+  if(!skip && !text){ toast('Напишите ответ или нажмите «Пропустить».'); return; }
+  S.busy=true;
+  const secs = elapsed();
+  setInput(false);
+  $('#answer').value=''; $('#wc').textContent='0 слов';
+  const cur = S.current;
+  if(skip){ addMsg('— вопрос пропущен —','me'); if(!S.awaitingFollow) cur.skipped=true; }
+  else { addMsg(text,'me', secs+' сек'); cur.answers.push(text); cur.times.push(secs); }
+
+  // уточняющий вопрос по правилам (только после основного ответа)
+  if(!S.awaitingFollow && !skip){
+    const f = followUpFor(cur.q, text);
+    if(f){ S.followUps++; S.awaitingFollow=true; cur.followQ=f; await botSay(f,true); S.busy=false; setInput(true); return; }
+  }
+  S.awaitingFollow=false;
+  S.items.push(cur);
+  S.idx++;
+  if(S.idx >= S.plan.length){ await botSay('Спасибо, это все вопросы на сегодня. Готовлю разбор…',false); await sleep(500); S.busy=false; finish(); return; }
+  await botSay(pick(S.type==='stress'?REACT.stress:REACT.normal),false);
+  S.busy=false;
+  askCurrent();
+}
+$('#send-btn').addEventListener('click', ()=>submit(false));
+$('#skip-btn').addEventListener('click', ()=>submit(true));
+$('#answer').addEventListener('keydown', e=>{ if(e.key==='Enter' && (e.ctrlKey||e.metaKey)){ e.preventDefault(); submit(false); }});
+$('#answer').addEventListener('input', e=>{ const n=tokens(e.target.value.toLowerCase()).length; $('#wc').textContent=n+' '+plural(n,['слово','слова','слов']); });
+$('#finish-early').addEventListener('click', ()=>{
+  if(!S.current) return;
+  if(S.current.answers.length) { S.items.push(S.current); }
+  if(!S.items.length){ toast('Ответьте хотя бы на один вопрос, чтобы получить отчёт.'); if(S.current.answers.length) S.items.pop(); return; }
+  finish();
+});
+
+/* =========================================================
+   8. ОТЧЁТ
+   ========================================================= */
+function finish(){
+  stopTimer(); try{ speechSynthesis.cancel(); }catch(e){}
+  const items = S.items.map(scoreItem);
+  const comps = {};
+  COMP_ORDER.forEach(c=>{
+    const v = items.filter(i=>i.scores[c]!==undefined).map(i=>i.scores[c]);
+    comps[c] = v.length ? r1(v.reduce((a,b)=>a+b,0)/v.length) : null;
+  });
+  const avail = Object.values(comps).filter(v=>v!==null);
+  const overall = Math.round(avail.reduce((a,b)=>a+b,0)/avail.length*10);
+  const answered = items.filter(i=>!i.skipped);
+  const all = analyze(answered.map(i=>i.answers.join(' ')).join(' '));
+  const times = answered.flatMap(i=>i.times);
+  const metrics = {
+    avgWords: answered.length ? Math.round(answered.reduce((a,i)=>a+i.a.n,0)/answered.length) : 0,
+    avgTime: times.length ? Math.round(times.reduce((a,b)=>a+b,0)/times.length) : 0,
+    fillers: all.fillerTotal, fillerList: all.fillers,
+    hedges: all.hedges,
+    withNums: answered.filter(i=>i.a.hasNum).length,
+    star: (()=>{ const b=answered.filter(i=>i.q.type==='beh'); return b.length ? Math.round(b.reduce((a,i)=>a+i.a.starCount,0)/b.length/4*100) : null; })(),
+    skipped: items.filter(i=>i.skipped).length,
+    followUps: S.followUps
+  };
+  const role = roleById(S.role);
+  const hist = store.get();
+  const prev = [...hist].reverse().find(h=>h.role===S.role);
+  const rec = { date:new Date().toISOString(), role:S.role, type:S.type, n:items.length, overall, comps };
+  hist.push(rec); store.set(hist.slice(-50));
+  S.report = { items, comps, overall, metrics, role, prev };
+  S.current = null;
+  renderReport();
+  show('report');
+}
+
+function verdictFor(v){
+  if(v>=80) return ['Готовы к собеседованию','var(--good)'];
+  if(v>=60) return ['Хороший уровень, есть что подтянуть','var(--good)'];
+  if(v>=40) return ['Нужна практика','var(--mid)'];
+  return ['Начальный уровень — тренируйтесь ещё','var(--bad)'];
+}
+
+function ringSVG(v){
+  const R=74, C=2*Math.PI*R, col=v>=60?'#1E9B6A':v>=40?'#D99317':'#D24B4B';
+  return `<svg width="170" height="170" viewBox="0 0 170 170"><circle cx="85" cy="85" r="${R}" fill="none" stroke="#EEEAE2" stroke-width="14"/><circle cx="85" cy="85" r="${R}" fill="none" stroke="${col}" stroke-width="14" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-v/100)}" style="transition:stroke-dashoffset .8s"/></svg><div class="val"><div><b>${v}</b><br><span>из 100</span></div></div>`;
+}
+
+function radarSVG(comps, focus){
+  const W=380,H=270,cx=190,cy=135,R=86, keys=COMP_ORDER, n=keys.length;
+  const pt=(i,r)=>{ const a=-Math.PI/2 + i*2*Math.PI/n; return [cx+r*Math.cos(a), cy+r*Math.sin(a)]; };
+  let g='';
+  [2.5,5,7.5,10].forEach(l=>{ g+=`<polygon points="${keys.map((_,i)=>pt(i,R*l/10).join(',')).join(' ')}" fill="none" stroke="#E3DED4" stroke-width="1"/>`; });
+  keys.forEach((k,i)=>{ const [x,y]=pt(i,R); g+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#E3DED4"/>`; });
+  const poly = keys.map((k,i)=>pt(i,R*(comps[k]??0)/10).join(',')).join(' ');
+  g+=`<polygon points="${poly}" fill="rgba(47,85,228,.18)" stroke="#2F55E4" stroke-width="2"/>`;
+  keys.forEach((k,i)=>{ const [x,y]=pt(i,R*(comps[k]??0)/10); g+=`<circle cx="${x}" cy="${y}" r="3.5" fill="#2F55E4"/>`; });
+  keys.forEach((k,i)=>{
+    const [x,y]=pt(i,R+22); const anchor = Math.abs(x-cx)<5?'middle':x>cx?'start':'end';
+    const isF=focus.includes(k);
+    g+=`<text x="${x}" y="${y+4}" text-anchor="${anchor}" font-size="12" font-family="Onest,sans-serif" fill="${isF?'#C66A10':'#656B76'}" font-weight="${isF?700:500}">${COMPS[k].short}${comps[k]===null?' —':''}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:380px;display:block;margin:0 auto" role="img" aria-label="Диаграмма компетенций">${g}</svg>`;
+}
+
+function renderReport(){
+  const R = S.report;
+  const [vt,vc] = verdictFor(R.overall);
+  const d = new Date();
+  $('#rep-sub').textContent = `${R.role.name} (junior) · ${TYPE_NAME[S.type]} · ${R.items.length} ${plural(R.items.length,['вопрос','вопроса','вопросов'])} · ${d.toLocaleDateString('ru-RU')}`;
+  $('#ring').innerHTML = ringSVG(R.overall);
+  $('#verdict').innerHTML = `<span style="color:${vc}">${vt}</span>`;
+  if(R.prev){ const df=R.overall-R.prev.overall; $('#delta').innerHTML = `Прошлая попытка на эту роль: ${R.prev.overall} · <span class="delta" style="color:${df>=0?'var(--good)':'var(--bad)'}">${df>=0?'+':''}${df}</span>`; }
+  else $('#delta').textContent = 'Первая попытка на эту роль';
+  $('#radar').innerHTML = radarSVG(R.comps, R.role.focus) + `<p class="small muted" style="text-align:center;margin:6px 0 0">Оранжевым — ключевые компетенции для роли</p>`;
+  $('#bars').innerHTML = COMP_ORDER.map(c=>{
+    const v=R.comps[c]; const f=R.role.focus.includes(c);
+    return `<div class="b"><div class="bl"><span>${COMPS[c].name}${f?'<span class="focus-tag">ключевая</span>':''}</span><b>${v===null?'—':v}</b></div><div class="bt"><i style="width:${(v??0)*10}%;background:${v===null?'#ccc':colorFor(v)}"></i></div></div>`;
+  }).join('');
+
+  // План: самые слабые компетенции (ключевые для роли — в приоритете) + частые замечания
+  const ranked = COMP_ORDER.filter(c=>R.comps[c]!==null).sort((a,b)=>(R.comps[a] - (R.role.focus.includes(a)?0.8:0)) - (R.comps[b] - (R.role.focus.includes(b)?0.8:0)));
+  const recs = ranked.slice(0,2).map(c=>`<b>${COMPS[c].name}.</b> ${COMP_ADVICE[c]}`);
+  const freq={}; R.items.forEach(i=>i.minus.forEach(m=>{ const k=m.split(':')[0].split('.')[0]; freq[k]=(freq[k]||{n:0,m}); freq[k].n++; }));
+  const top = Object.values(freq).sort((a,b)=>b.n-a.n).filter(x=>x.n>=2).slice(0,2).map(x=>x.m+` <span class="muted">(в ${x.n} ${plural(x.n,['ответе','ответах','ответах'])})</span>`);
+  $('#recs').innerHTML = [...recs, ...top].map(r=>`<li style="margin-bottom:10px">${r}</li>`).join('');
+
+  const M=R.metrics;
+  const fl = Object.entries(M.fillerList).map(([w,c])=>`«${w}» ×${c}`).join(', ');
+  $('#metrics').innerHTML = [
+    ['Средняя длина ответа', `${M.avgWords} ${plural(M.avgWords,['слово','слова','слов'])} <span class="muted small">(норма ${CONFIG.idealWords[0]}–${CONFIG.idealWords[1]})</span>`],
+    ['Среднее время ответа', `${Math.floor(M.avgTime/60)}:${String(M.avgTime%60).padStart(2,'0')}`],
+    ['Полнота STAR в поведенческих', M.star===null?'—':M.star+'%'],
+    ['Ответы с цифрами', `${M.withNums} из ${R.items.length-M.skipped}`],
+    ['Слова-паразиты', M.fillers? `${M.fillers} <span class="muted small">(${esc(fl)})</span>` : '0 👍'],
+    ['Неуверенные формулировки', M.hedges],
+    ['Уточняющих вопросов', M.followUps],
+    ['Пропущено вопросов', M.skipped]
+  ].map(([k,v])=>`<div class="metric"><span>${k}</span><b>${v}</b></div>`).join('');
+
+  $('#answers').innerHTML = R.items.map((i,idx)=>`
+    <div class="ans">
+      <button aria-expanded="false"><span class="sc" style="background:${colorFor(i.total)}">${i.total}</span><span class="qt">${idx+1}. ${esc(i.q.text)}<br><span class="chip t-${i.q.type}" style="margin-top:6px">${TYPE_NAME[i.q.type]}</span>${Object.entries(i.scores).map(([c,v])=>`<span class="chip">${COMPS[c].short} ${v}</span>`).join('')}</span><span class="chev">▾</span></button>
+      <div class="body">
+        <div class="small muted">Ваш ответ${i.followQ?' (с уточнением)':''}:</div>
+        <div class="quote">${i.skipped?'— пропущен —':esc(i.answers[0]||'')}${i.followQ&&i.answers[1]?`\n\n<b>Уточнение:</b> ${esc(i.followQ)}\n${esc(i.answers[1])}`:''}</div>
+        ${i.plus.length?`<b>Что получилось</b><ul class="pl plus">${i.plus.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`:''}
+        ${i.minus.length?`<b>Что улучшить</b><ul class="pl minus">${i.minus.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`:''}
+        <b>Что проверяет интервьюер</b><p class="small" style="margin:4px 0 10px">${esc(i.q.checks)}</p>
+        <b>Как построить сильный ответ</b><p class="small" style="margin:4px 0 0">${esc(i.q.tip)}</p>
+      </div>
+    </div>`).join('');
+}
+$('#answers').addEventListener('click', e=>{ const b=e.target.closest('.ans>button'); if(!b) return; const a=b.parentElement; a.classList.toggle('open'); b.setAttribute('aria-expanded', a.classList.contains('open')); });
+$('#again-btn').addEventListener('click', ()=>{ renderSetup(); show('setup'); });
+
+function reportText(){
+  const R=S.report; const L=[];
+  L.push(`СобесТрен ИТП — отчёт о тренировке`);
+  L.push(`${R.role.name} (junior), ${TYPE_NAME[S.type]}, ${new Date().toLocaleDateString('ru-RU')}`);
+  L.push(`Итог: ${R.overall}/100 — ${verdictFor(R.overall)[0]}`); L.push('');
+  L.push('Компетенции:'); COMP_ORDER.forEach(c=>L.push(`• ${COMPS[c].name}: ${R.comps[c]===null?'не оценивалась':R.comps[c]+'/10'}`)); L.push('');
+  R.items.forEach((i,k)=>{ L.push(`${k+1}. ${i.q.text} — ${i.total}/10`); i.minus.forEach(m=>L.push(`   → ${m}`)); });
+  return L.join('\n');
+}
+$('#copy-btn').addEventListener('click', async ()=>{
+  const t=reportText();
+  try{ await navigator.clipboard.writeText(t); toast('Отчёт скопирован'); }
+  catch(e){ const ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); toast('Отчёт скопирован'); }catch(_){ toast('Не удалось скопировать'); } ta.remove(); }
+});
+
+/* =========================================================
+   9. БАНК, ИСТОРИЯ, «О ПРОЕКТЕ»
+   ========================================================= */
+function renderBankFilters(){
+  $('#f-type').innerHTML = '<option value="">Все типы</option>'+TYPES.map(t=>`<option value="${t.id}">${t.name}</option>`).join('');
+  $('#f-role').innerHTML = '<option value="">Все должности</option>'+ROLES.map(r=>`<option value="${r.id}">${r.name}</option>`).join('');
+}
+function renderBank(){
+  const ft=$('#f-type').value, fr=$('#f-role').value;
+  const list = BANK.filter(q=>(!ft||q.type===ft) && (!fr||q.roles==='all'||q.roles.includes(fr)));
+  $('#f-count').textContent = list.length+' '+plural(list.length,['вопрос','вопроса','вопросов']);
+  $('#bank-list').innerHTML = list.map(q=>`
+    <div class="qitem">
+      <div><span class="chip t-${q.type}">${TYPE_NAME[q.type]}</span>${q.roles==='all'?'<span class="chip">Все должности</span>':q.roles.map(r=>`<span class="chip">${esc(roleById(r).name)}</span>`).join('')}</div>
+      <b>${esc(q.text)}</b>
+      <p><b style="color:var(--ink)">Проверяет:</b> ${esc(q.checks)} · ${q.comps.map(c=>COMPS[c].short).join(', ')}</p>
+      <p><b style="color:var(--ink)">Сильный ответ:</b> ${esc(q.tip)}</p>
+    </div>`).join('');
+}
+$('#f-type').addEventListener('change', renderBank);
+$('#f-role').addEventListener('change', renderBank);
+
+function renderHistory(){
+  const h = store.get().slice().reverse();
+  if(!h.length){ $('#hist-box').innerHTML = '<p class="muted" style="margin:0">Пока нет попыток. Пройдите первую тренировку — результат появится здесь.</p>'; return; }
+  $('#hist-box').innerHTML = `<div style="overflow-x:auto"><table><thead><tr><th>Дата</th><th>Должность</th><th>Тип</th><th>Вопросов</th><th>Балл</th></tr></thead><tbody>${
+    h.map(r=>`<tr><td>${new Date(r.date).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</td><td>${esc(roleById(r.role)?.name||r.role)}</td><td>${TYPE_NAME[r.type]||r.type}</td><td>${r.n}</td><td><b style="color:${colorFor(r.overall/10)}">${r.overall}</b></td></tr>`).join('')
+  }</tbody></table></div>`;
+}
+$('#clear-hist').addEventListener('click', e=>{
+  const b=e.currentTarget;
+  if(!b.dataset.c){ b.dataset.c='1'; b.textContent='Точно очистить?'; setTimeout(()=>{ delete b.dataset.c; b.textContent='Очистить историю'; },2500); return; }
+  store.set([]); delete b.dataset.c; b.textContent='Очистить историю'; renderHistory(); toast('История очищена');
+});
+
+function renderAbout(){
+  $('#about-comps').innerHTML = COMP_ORDER.map(c=>`<div class="metric" style="display:block"><b>${COMPS[c].name}</b><div class="small muted">${COMPS[c].desc}</div></div>`).join('');
+}
+
+/* ---------- Запуск ---------- */
+$('#st-q').textContent = BANK.length;
+renderSetup(); renderBankFilters(); renderBank(); renderAbout();
+const h0 = location.hash.slice(1);
+show(ROUTES.includes(h0)?h0:'home', false);
+</script>
+</body>
+</html>
